@@ -5,4 +5,5 @@
   <Project Path="Minimum.Android/Minimum.Android.csproj" />
   <Project Path="Minimum.Desktop/Minimum.Desktop.csproj" />
   <Project Path="Minimum/Minimum.csproj" />
+  <Project Path="server/server.csproj" Id="df8dbdb5-da0d-4ba1-a03d-6808fb166879" />
 </Solution>

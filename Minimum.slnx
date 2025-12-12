@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Project Path="Minimum.Android/Minimum.Android.csproj" />
+  <Project Path="Minimum.Desktop/Minimum.Desktop.csproj" />
+  <Project Path="Minimum/Minimum.csproj" />
+</Solution>

@@ -26,7 +26,7 @@ namespace server.Data
                 .HasOne(m => m.User)
                 .WithMany(u => u.Messages)
                 .HasForeignKey(m => m.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Chat)

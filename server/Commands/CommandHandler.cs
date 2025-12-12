@@ -18,7 +18,7 @@ public abstract class CommandHandler
         UserTokens = tokens;
         Chats = chats;
     }
-
+    
     public abstract Response Handle(Request request);
 
     protected bool ValidateToken(string token, out string username)

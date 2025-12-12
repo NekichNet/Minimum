@@ -1,6 +1,6 @@
 ﻿namespace server.Models;
 
-public class Response
+public class Response // dto
 {
     public bool Success { get; set; }
     public string Message { get; set; }

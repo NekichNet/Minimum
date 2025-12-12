@@ -1,6 +1,6 @@
 ﻿namespace server.Models;
 
-public class Request
+public class Request // dto
 {
     public string Type { get; set; }
     public string Username { get; set; }

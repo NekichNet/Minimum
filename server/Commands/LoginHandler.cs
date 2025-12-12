@@ -5,16 +5,18 @@ namespace server.Commands;
 
 public class LoginHandler : CommandHandler
 {
-    public LoginHandler(ConcurrentDictionary<string, string> users,
+    public LoginHandler(
+        ConcurrentDictionary<int, User> usersById,
+        ConcurrentDictionary<string, User> usersByName,
         ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<string, Chat> chats) : base(users, tokens, chats) { }
+        ConcurrentDictionary<int, Chat> chatsById) : base(usersById, usersByName, tokens, chatsById) { }
 
     public override Response Handle(Request request)
     {
-        if (Users.TryGetValue(request.Username, out string storedPassword) && storedPassword == request.Password)
+        if (UsersByName.TryGetValue(request.Username, out User user) && user.Password == request.Password)
         {
             string token = Guid.NewGuid().ToString();
-            UserTokens.TryAdd(token, request.Username);
+            UserTokens.TryAdd(token, user.Name);
             return new Response { Success = true, Message = "Успешный вход.", Token = token };
         }
 

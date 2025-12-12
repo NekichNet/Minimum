@@ -5,25 +5,33 @@ namespace server.Commands;
 
 public abstract class CommandHandler
 {
-    protected readonly ConcurrentDictionary<string, string> Users;
+    protected readonly ConcurrentDictionary<int, User> UsersById;
+    protected readonly ConcurrentDictionary<string, User> UsersByName;
     protected readonly ConcurrentDictionary<string, string> UserTokens;
-    protected readonly ConcurrentDictionary<string, Chat> Chats;
+    protected readonly ConcurrentDictionary<int, Chat> ChatsById;
 
     public CommandHandler(
-        ConcurrentDictionary<string, string> users,
+        ConcurrentDictionary<int, User> usersById,
+        ConcurrentDictionary<string, User> usersByName,
         ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<string, Chat> chats)
+        ConcurrentDictionary<int, Chat> chatsById)
     {
-        Users = users;
+        UsersById = usersById;
+        UsersByName = usersByName;
         UserTokens = tokens;
-        Chats = chats;
+        ChatsById = chatsById;
     }
-    
+
     public abstract Response Handle(Request request);
 
-    protected bool ValidateToken(string token, out string username)
+    protected bool ValidateToken(string token, out User user)
     {
-        username = null;
-        return !string.IsNullOrEmpty(token) && UserTokens.TryGetValue(token, out username);
+        user = null;
+        if (string.IsNullOrEmpty(token) || !UserTokens.TryGetValue(token, out string username))
+        {
+            return false;
+        }
+
+        return UsersByName.TryGetValue(username, out user);
     }
 }

@@ -1,0 +1,34 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:compilerservices="using:System.Runtime.CompilerServices"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Minimum.ViewModels"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="Minimum.Views.ChatView" x:DataType="vm:ChatViewModel"
+			 Classes="View">
+	<UserControl.Styles>
+		<StyleInclude Source="avares://Minimum/Assets/Styles.axaml"></StyleInclude>
+	</UserControl.Styles>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition></RowDefinition>
+			<RowDefinition Height="50"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<ListBox Name="MessageListBox" Grid.Row="0"></ListBox>
+		<Border Grid.Row="1" Classes="Panel">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition></ColumnDefinition>
+					<ColumnDefinition Width="50"></ColumnDefinition>
+					<ColumnDefinition Width="50"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+
+				<TextBox Name="InputTextBox" Grid.Column="0"></TextBox>
+				<Button Name="AttachFileButton" Grid.Column="1"></Button>
+				<Button Name="SendButton" Grid.Column="2"></Button>
+			</Grid>
+		</Border>
+	</Grid>
+</UserControl>

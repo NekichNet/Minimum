@@ -6,8 +6,7 @@
         xmlns:views="using:Minimum.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="Minimum.Views.MainWindow"
-        Classes="Standart"
         Icon="/Assets/avalonia-logo.ico"
         Title="Minimum">
-        <views:MainView />
+        <views:ChatView />
 </Window>

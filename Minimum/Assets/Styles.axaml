@@ -1,0 +1,67 @@
+<Styles xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+	<Styles.Resources>
+		<ResourceDictionary>
+			<ResourceDictionary.MergedDictionaries>
+				<ResourceInclude Source="avares://Minimum/Assets/Colours.axaml"/>
+			</ResourceDictionary.MergedDictionaries>
+		</ResourceDictionary>
+	</Styles.Resources>
+
+	<Style Selector="Window">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Window">
+					<Grid>
+						<Border BorderThickness="2"
+								CornerRadius="7"
+								Background="{DynamicResource Background3Brush}"
+								BorderBrush="{DynamicResource Accent1Brush}">
+							<Border.Styles>
+								<StyleInclude Source="avares://Minimum/Assets/Styles.axaml"></StyleInclude>
+							</Border.Styles>
+							<ContentPresenter Padding="5"/>
+						</Border>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style Selector="UserControl.View">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="UserControl">
+					<Border>
+						<Border.Styles>
+							<Style Selector="Border.Panel">
+								<Setter Property="BorderThickness" Value="1"></Setter>
+								<Setter Property="CornerRadius" Value="5"></Setter>
+								<Setter Property="Background" Value="{DynamicResource Background2Brush}"></Setter>
+								<Setter Property="BorderBrush" Value="{DynamicResource Accent1Brush}"></Setter>
+							</Style>
+						</Border.Styles>
+						<ContentPresenter Padding="5"></ContentPresenter>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style Selector="Border.Panel">
+		<Setter Property="BorderThickness" Value="1"></Setter>
+		<Setter Property="CornerRadius" Value="5"></Setter>
+		<Setter Property="Background" Value="{DynamicResource Background2Brush}"></Setter>
+		<Setter Property="BorderBrush" Value="{DynamicResource Accent1Brush}"></Setter>
+	</Style>
+	<Style Selector="Button">
+		<Setter Property="Background" Value="{DynamicResource Background1Brush}"></Setter>
+		<Setter Property="BorderBrush" Value="{DynamicResource Accent1Brush}"></Setter>
+		<Setter Property="CornerRadius" Value="5"></Setter>
+	</Style>
+	<Style Selector="Button:pointerover">
+		<Setter Property="BorderThickness" Value="3"></Setter>
+	</Style>
+	<Style Selector="Button:pressed">
+		<Setter Property="Background" Value="{DynamicResource Accent1Brush}"></Setter>
+	</Style>
+</Styles>

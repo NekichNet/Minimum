@@ -42,10 +42,12 @@ internal class Program
 
         var host = builder.Build();
 
+        // вот тут сервер запускается
         var server = host.Services.GetRequiredService<TcpChatService>();
         _ = Task.Run(() => server.Start());
-
         _ = Task.Run(async () => await host.RunAsync());
+
+        // а что идёт дальше даже бог не знает
 
         Console.WriteLine("CLI сервер запущен. Введите команду (или 'exit' для выхода):");
 

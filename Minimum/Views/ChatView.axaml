@@ -18,6 +18,11 @@
 		<local:ChatHeaderView Grid.Row="0"></local:ChatHeaderView>
 
 		<ListBox Name="MessageListBox" Grid.Row="1" VerticalAlignment="Stretch" ItemsSource="{Binding Messages}">
+			<ListBox.Styles>
+				<Style Selector="ListBox#MessageListBox SelectingItemsControl">
+					<Setter Property="IsVisible" Value="False"></Setter>
+				</Style>
+			</ListBox.Styles>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid HorizontalAlignment="Stretch">

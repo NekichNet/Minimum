@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using Minimum.Services.Interfaces;
 using System;
@@ -18,14 +19,14 @@ namespace Minimum.Services
         public bool CanGoBack => _history.Count > 0;
         private UserControl? _current;
 
-        public UserControl CurrentUserControl => _current ?? (Application.Current?.MainWindow?.Content as UserControl ?? throw new InvalidOperationException("Нет текущего UserControl"));
+        public UserControl CurrentUserControl => _current ?? (GetMainWindow()?.Content as UserControl ?? throw new InvalidOperationException("Нет текущего UserControl"));
         public event PropertyChangedEventHandler? PropertyChanged;
 
 
 
         public void NavigateTo(UserControl view)
         {
-            var main = Application.Current?.MainWindow;
+            var main = GetMainWindow();
             if (main == null)
             {
                 PushCurrentIfExists();
@@ -52,7 +53,7 @@ namespace Minimum.Services
         {
             try
             {
-                var existing = Application.Current?.MainWindow?.Content as UserControl ?? _current;
+                var existing = GetMainWindow()?.Content as UserControl ?? _current;
                 if (existing != null)
                 {
                     if (_history.Count == 0 || _history.Peek() != existing)
@@ -70,7 +71,7 @@ namespace Minimum.Services
             if (_history.Count == 0) return;
 
             var prev = _history.Pop();
-            var main = Application.Current?.MainWindow;
+            var main = GetMainWindow();
 
             Dispatcher.UIThread.Post(() =>
             {
@@ -105,6 +106,17 @@ namespace Minimum.Services
         protected void OnPropertyChanged(string propName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
+        }
+
+
+
+        private static Window? GetMainWindow()
+        {
+            return Application.Current?.ApplicationLifetime switch
+            {
+                IClassicDesktopStyleApplicationLifetime desktop => desktop.MainWindow,
+                _ => null
+            };
         }
     }
 }

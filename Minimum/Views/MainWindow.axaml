@@ -21,7 +21,7 @@
 
         <GridSplitter Grid.Column="1"></GridSplitter>
 
-        <Border Grid.Column="2" BorderThickness="1" Margin="3"">
+        <Border x:Name="SelectionContainer" Grid.Column="2" Margin="3">
             <!--<views:ChatView></views:ChatView>-->
         </Border>
     </Grid>

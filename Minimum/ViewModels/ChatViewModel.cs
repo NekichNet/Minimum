@@ -12,7 +12,11 @@ namespace Minimum.ViewModels
     {
         public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>()
         {
-            new Message{Text = "Сообщени", Time = DateTime.Now}
+            new Message{Text = "Сообщени", Time = DateTime.Now},
+            new Message{Text = "Сообщени1", Time = DateTime.Now},
+            new Message{Text = "Сообщени2", Time = DateTime.Now},
+            new Message{Text = "Сообщени3", Time = DateTime.Now},
+            new Message{Text = "Сообщени5", Time = DateTime.Now}
         };
     }
 }

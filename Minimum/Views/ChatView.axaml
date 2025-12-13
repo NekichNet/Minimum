@@ -8,8 +8,6 @@
              xmlns:local="using:Minimum.Views"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="Minimum.Views.ChatView" x:DataType="vm:ChatViewModel">
-	
-	
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="60"></RowDefinition>
@@ -17,7 +15,9 @@
 			<RowDefinition Height="auto"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<ListBox ItemsSource="{Binding Messages}" Name="MessageListBox" Grid.Row="0" HorizontalAlignment="Stretch">
+		<local:ChatHeaderView Grid.Row="0"></local:ChatHeaderView>
+
+		<ListBox Name="MessageListBox" Grid.Row="1" VerticalAlignment="Stretch" ItemsSource="{Binding Messages}">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid HorizontalAlignment="Stretch">
@@ -36,12 +36,12 @@
 							<TextBlock Text="{Binding Text}"></TextBlock>
 							<TextBlock Grid.Row="1" Text="{Binding Text}"></TextBlock>
 						</Grid>
-					
 					</Grid>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 		</ListBox>
-		<Border Grid.Row="1">
+
+		<Border Grid.Row="2">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition></ColumnDefinition>

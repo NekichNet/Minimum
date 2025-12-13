@@ -5,7 +5,7 @@
              x:Class="Minimum.App"
              RequestedThemeVariant="Default">
     <Application.Styles>
-        <FluentTheme />
+        <SimpleTheme />
         <StyleInclude Source="avares://IconPacks.Avalonia.Material/Material.axaml" />
     </Application.Styles>
     <Application.DataTemplates>

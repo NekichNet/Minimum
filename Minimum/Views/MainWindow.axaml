@@ -12,15 +12,17 @@
         Title="Minimum">
     <Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition MinWidth="80"></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
             <ColumnDefinition MinWidth="300"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <views:ChatListView Grid.Column="0"></views:ChatListView>
+        <views:ChatListView Grid.Column="0" Margin="3"></views:ChatListView>
 
         <GridSplitter Grid.Column="1"></GridSplitter>
 
-        <views:ChatView Grid.Column="2"></views:ChatView>
+        <Border Grid.Column="2" BorderThickness="1" Margin="3">
+            <views:ChatView></views:ChatView>
+        </Border>
     </Grid>
 </Window>

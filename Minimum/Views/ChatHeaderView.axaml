@@ -1,0 +1,51 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Minimum.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="200"
+             x:Class="Minimum.Views.ChatHeaderView" x:DataType="vm:ChatHeaderViewModel">
+  
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="auto"></ColumnDefinition>
+			<ColumnDefinition></ColumnDefinition>
+			<ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+			<RowDefinition></RowDefinition>
+			<RowDefinition Height="auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        
+        <TextBlock Margin="10" FontWeight="ExtraBlack" Text="(photo placeholder, delete on tests)" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+
+        <Image Margin="10" Source="{Binding HeaderImageSource}" Grid.Column="0"></Image>
+        <TextBlock Margin="0,10,0,10" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding HeaderTitle}" Grid.Column="1"></TextBlock>
+        <StackPanel Margin="10" Orientation="Horizontal" Grid.Column="2">
+            <Button  HorizontalAlignment="Stretch" Content="{Binding BTN_CONTENT}" HorizontalContentAlignment="Center"></Button>
+			<Button Content="...">
+                <Button.Flyout>
+                    <MenuFlyout>
+                        <MenuItem Header="Покинуть чат" />
+                        <MenuItem Header="Удолтть чат" />
+                        <!--
+                        <Separator />
+                        <MenuItem Header="Настройки">
+                           <MenuItem Header="Настройки 1" />
+                           <MenuItem Header="Настройки 2" />
+                        </MenuItem> 
+                        -->
+                   </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
+        <SplitView CompactPaneLength="0" Grid.Row="1" Grid.ColumnSpan="3" DisplayMode="CompactInline" PanePlacement="Top">
+			<DockPanel>
+				
+            </DockPanel>
+        </SplitView>
+
+
+    </Grid>
+</UserControl>

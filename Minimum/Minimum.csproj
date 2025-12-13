@@ -23,4 +23,10 @@
     <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="ReactiveUI.Fody" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Views\SignInUpWindow.axaml.cs">
+      <DependentUpon>SignInUpWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
 </Project>

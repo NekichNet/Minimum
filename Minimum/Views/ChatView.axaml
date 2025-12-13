@@ -1,0 +1,35 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:compilerservices="using:System.Runtime.CompilerServices"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Minimum.ViewModels"
+			 xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="Minimum.Views.ChatView" x:DataType="vm:ChatViewModel">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition></RowDefinition>
+			<RowDefinition Height="auto"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<ListBox Name="MessageListBox" Grid.Row="0"></ListBox>
+		<Border Grid.Row="1">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition></ColumnDefinition>
+					<ColumnDefinition Width="auto"></ColumnDefinition>
+					<ColumnDefinition Width="auto"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+
+				<TextBox Name="InputTextBox" Grid.Column="0" Margin="3 3 1.5 1.5" VerticalAlignment="Bottom"></TextBox>
+				<Button Name="AttachFileButton" Grid.Column="1" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+					<iconPacks:PackIconMaterial Kind="AttachmentPlus"></iconPacks:PackIconMaterial>
+				</Button>
+				<Button Name="SendButton" Grid.Column="2" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+					<iconPacks:PackIconMaterial Kind="Send"></iconPacks:PackIconMaterial>
+				</Button>
+			</Grid>
+		</Border>
+	</Grid>
+</UserControl>

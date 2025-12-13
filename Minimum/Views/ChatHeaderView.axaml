@@ -5,7 +5,10 @@
              xmlns:vm="clr-namespace:Minimum.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="200"
              x:Class="Minimum.Views.ChatHeaderView" x:DataType="vm:ChatHeaderViewModel">
-  
+    <UserControl.Styles>
+		<StyleInclude Source="avares://Minimum/Assets/Styles.axaml"></StyleInclude>
+	</UserControl.Styles>
+
     <Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="auto"></ColumnDefinition>

@@ -1,16 +1,12 @@
 ﻿using server.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Minimum.Repositories.Interfaces
+namespace Minimum.Repositories.Interfaces;
+
+public interface IMessageRepository
 {
-    public interface IMessageRepository
-    {
-        Task<Message?> GetMessageByIdAsync(int id);
-        Task AddMessageAsync(Message message);
-        Task DeleteMessageAsync(int id);
-    }
+    Task<Message?> GetMessageByIdAsync(int id);
+    Task AddMessageAsync(Message message);
+    Task DeleteMessageAsync(int id);
+    Task<Message?> GetMessageByFileIdAsync(string fileId);
+    Task UpdateMessageAsync(Message message);
 }

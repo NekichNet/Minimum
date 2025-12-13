@@ -1,4 +1,5 @@
-﻿using server.Models;
+﻿using Minimum.Repositories.Interfaces;
+using server.Models;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 
@@ -7,28 +8,30 @@ namespace server.Commands;
 public class RegisterHandler : CommandHandler
 {
     public RegisterHandler(
-        ConcurrentDictionary<int, User> usersById,
-        ConcurrentDictionary<string, User> usersByName,
-        ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<int, Chat> chatsById) : base(usersById, usersByName, tokens, chatsById) { }
+        IUserRepository userRepository,
+        IChatRepository chatRepository,
+        IMessageRepository messageRepository,
+        ConcurrentDictionary<string, string> tokens) : base(userRepository, chatRepository, messageRepository, tokens) { }
 
-    public override Response Handle(Request request, NetworkStream stream, TcpClient client)
+    public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
-        if (UsersByName.ContainsKey(request.Username))
+        try
         {
-            return new Response { Success = false, Message = "Пользователь уже существует." };
+            var existingUser = await UserRepository.GetUserByNameAsync(request.Username);
+            if (existingUser != null)
+            {
+                return new Response { Success = false, Message = "Пользователь уже существует." };
+            }
+
+            var newUser = new User { Name = request.Username, Password = request.Password };
+            await UserRepository.AddUserAsync(newUser);
+            return new Response { Success = true, Message = "Регистрация успешна." };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
         }
 
-        var newUser = new User
-        {
-            Id = UsersById.Count + 1,
-            Name = request.Username,
-            Password = request.Password
-        };
-
-        UsersById.TryAdd(newUser.Id, newUser);
-        UsersByName.TryAdd(newUser.Name, newUser);
-
-        return new Response { Success = true, Message = "Регистрация успешна." };
+        return new Response { Success = false, Message = "qwe" };
     }
 }

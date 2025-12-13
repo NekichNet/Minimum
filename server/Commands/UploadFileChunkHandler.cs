@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Minimum.Repositories.Interfaces;
+using Newtonsoft.Json;
 using server.Models;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
@@ -11,19 +12,20 @@ public class UploadFileChunkHandler : CommandHandler
     private readonly string _uploadDir;
 
     public UploadFileChunkHandler(
-        ConcurrentDictionary<int, User> usersById,
-        ConcurrentDictionary<string, User> usersByName,
+        IUserRepository userRepository,
+        IChatRepository chatRepository,
+        IMessageRepository messageRepository,
         ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<int, Chat> chatsById,
-        string uploadDir) : base(usersById, usersByName, tokens, chatsById)
+        string uploadDir) : base(userRepository, chatRepository, messageRepository, tokens)
     {
         _uploadDir = uploadDir;
         Directory.CreateDirectory(_uploadDir);
     }
 
-    public override Response Handle(Request request, NetworkStream stream, TcpClient client)
+    public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
-        if (!ValidateToken(request.Token, out User user))
+        var (isValid, user) = await ValidateTokenAsync(request.Token);
+        if (!isValid)
         {
             return new Response { Success = false, Message = "Невалидный токен." };
         }
@@ -37,22 +39,24 @@ public class UploadFileChunkHandler : CommandHandler
 
         try
         {
-            if (request.FileData != null)
+            if (request.FileData.Length > 0)
             {
                 using var fs = new FileStream(filePath, FileMode.Append, FileAccess.Write);
-                fs.Write(request.FileData, 0, request.FileData.Length);
+                await fs.WriteAsync(request.FileData, 0, request.FileData.Length);
             }
 
             if (request.IsUploadComplete)
             {
-                foreach (var chat in ChatsById.Values)
+                var message = await MessageRepository.GetMessageByFileIdAsync(request.FileId);
+                if (message != null)
                 {
-                    var msg = chat.Messages.FirstOrDefault(m => m.FileId == request.FileId);
-                    if (msg != null)
+                    message.IsUploaded = true;
+                    await MessageRepository.UpdateMessageAsync(message);
+
+                    var chat = await ChatRepository.GetChatByIdAsync(message.ChatId);
+                    if (chat != null)
                     {
-                        msg.IsUploaded = true;
-                        BroadcastFileUpdate(chat, msg, user);
-                        break;
+                        BroadcastFileUpdate(chat, message, user);
                     }
                 }
             }

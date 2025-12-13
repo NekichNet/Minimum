@@ -1,4 +1,5 @@
-﻿using server.Models;
+﻿using Minimum.Repositories.Interfaces;
+using server.Models;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 
@@ -6,24 +7,24 @@ namespace server.Commands;
 
 public abstract class CommandHandler
 {
-    protected readonly ConcurrentDictionary<int, User> UsersById;
-    protected readonly ConcurrentDictionary<string, User> UsersByName;
+    protected readonly IUserRepository UserRepository;
+    protected readonly IChatRepository ChatRepository;
+    protected readonly IMessageRepository MessageRepository;
     protected readonly ConcurrentDictionary<string, string> UserTokens;
-    protected readonly ConcurrentDictionary<int, Chat> ChatsById;
 
     public CommandHandler(
-        ConcurrentDictionary<int, User> usersById,
-        ConcurrentDictionary<string, User> usersByName,
-        ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<int, Chat> chatsById)
+        IUserRepository userRepository,
+        IChatRepository chatRepository,
+        IMessageRepository messageRepository,
+        ConcurrentDictionary<string, string> tokens)
     {
-        UsersById = usersById;
-        UsersByName = usersByName;
+        UserRepository = userRepository;
+        ChatRepository = chatRepository;
+        MessageRepository = messageRepository;
         UserTokens = tokens;
-        ChatsById = chatsById;
     }
 
-    public abstract Response Handle(Request request, NetworkStream stream, TcpClient client);
+    public abstract Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client);
 
     protected bool ValidateToken(string token, out User user)
     {
@@ -32,6 +33,19 @@ public abstract class CommandHandler
         {
             return false;
         }
-        return UsersByName.TryGetValue(username, out user);
+
+        user = UserRepository.GetUserByNameAsync(username).Result;
+        return user != null;
+    }
+
+    protected async Task<(bool isValid, User user)> ValidateTokenAsync(string token)
+    {
+        if (string.IsNullOrEmpty(token) || !UserTokens.TryGetValue(token, out string username))
+        {
+            return (false, null);
+        }
+
+        var user = await UserRepository.GetUserByNameAsync(username);
+        return (user != null, user);
     }
 }

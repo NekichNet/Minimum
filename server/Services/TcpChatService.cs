@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Minimum.Repositories.Interfaces;
+using Newtonsoft.Json;
 using server.Commands;
 using server.Models;
 using System.Collections.Concurrent;
@@ -11,28 +12,35 @@ namespace server.Services;
 public class TcpChatService
 {
     private readonly TcpListener _listener;
-    private readonly ConcurrentDictionary<int, User> _usersById = new();
-    private readonly ConcurrentDictionary<string, User> _usersByName = new();
     private readonly ConcurrentDictionary<string, string> _tokens = new();
-    private readonly ConcurrentDictionary<int, Chat> _chatsById = new();
+    private readonly IUserRepository _userRepository;
+    private readonly IChatRepository _chatRepository;
+    private readonly IMessageRepository _messageRepository;
     private readonly string _uploadDir = "./uploads";
 
-    private readonly Dictionary<string, Func<Request, NetworkStream, TcpClient, Response>> _handlers;
+    private readonly Dictionary<string, Func<Request, NetworkStream, TcpClient, Task<Response>>> _handlers;
 
-    public TcpChatService(int port)
+    public TcpChatService(
+        int port,
+        IUserRepository userRepository,
+        IChatRepository chatRepository,
+        IMessageRepository messageRepository)
     {
+        _userRepository = userRepository;
+        _chatRepository = chatRepository;
+        _messageRepository = messageRepository;
         _listener = new TcpListener(IPAddress.Loopback, port);
 
-        _handlers = new Dictionary<string, Func<Request, NetworkStream, TcpClient, Response>>
+        _handlers = new Dictionary<string, Func<Request, NetworkStream, TcpClient, Task<Response>>>
         {
-            ["register"] = (req, s, c) => new RegisterHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req, s, c),
-            ["login"] = (req, s, c) => new LoginHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req, s, c),
-            ["create_chat"] = (req, s, c) => new CreateChatHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req, s, c),
-            ["send_message"] = (req, s, c) => new SendMessageHandler(_usersById, _usersByName, _tokens, _chatsById, _uploadDir).Handle(req, s, c),
-            ["join_chat"] = (req, s, c) => new JoinChatHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req, s, c),
-            ["send_file_placeholder"] = (req, s, c) => new SendFilePlaceholderHandler(_usersById, _usersByName, _tokens, _chatsById, _uploadDir).Handle(req, s, c),
-            ["upload_file_chunk"] = (req, s, c) => new UploadFileChunkHandler(_usersById, _usersByName, _tokens, _chatsById, _uploadDir).Handle(req, s, c),
-            ["download_file"] = (req, s, c) => new DownloadFileHandler(_usersById, _usersByName, _tokens, _chatsById, _uploadDir).Handle(req, s, c),
+            ["register"] = (req, s, c) => new RegisterHandler(_userRepository, _chatRepository, _messageRepository, _tokens).HandleAsync(req, s, c),
+            ["login"] = (req, s, c) => new LoginHandler(_userRepository, _chatRepository, _messageRepository, _tokens).HandleAsync(req, s, c),
+            ["create_chat"] = (req, s, c) => new CreateChatHandler(_userRepository, _chatRepository, _messageRepository, _tokens).HandleAsync(req, s, c),
+            ["send_message"] = (req, s, c) => new SendMessageHandler(_userRepository, _chatRepository, _messageRepository, _tokens, _uploadDir).HandleAsync(req, s, c),
+            ["send_file_placeholder"] = (req, s, c) => new SendFilePlaceholderHandler(_userRepository, _chatRepository, _messageRepository, _tokens, _uploadDir).HandleAsync(req, s, c),
+            ["upload_file_chunk"] = (req, s, c) => new UploadFileChunkHandler(_userRepository, _chatRepository, _messageRepository, _tokens, _uploadDir).HandleAsync(req, s, c),
+            ["download_file"] = (req, s, c) => new DownloadFileHandler(_userRepository, _chatRepository, _messageRepository, _tokens, _uploadDir).HandleAsync(req, s, c),
+            ["join_chat"] = (req, s, c) => new JoinChatHandler(_userRepository, _chatRepository, _messageRepository, _tokens).HandleAsync(req, s, c),
         };
     }
 
@@ -69,11 +77,16 @@ public class TcpChatService
             try
             {
                 request = JsonConvert.DeserializeObject<Request>(data);
+                Console.WriteLine($"{request.Username}, {request.Password}");
             }
             catch (JsonException)
             {
                 await SendJsonResponse(stream, new Response { Success = false, Message = "Неверный формат JSON." });
                 continue;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
 
             if (request == null)
@@ -85,19 +98,17 @@ public class TcpChatService
             Response response;
             if (_handlers.TryGetValue(request.Type, out var handler))
             {
-                response = handler(request, stream, client);
+                response = await handler(request, stream, client);
             }
             else
             {
                 response = new Response { Success = false, Message = "Неизвестная команда." };
             }
 
-            await SendJsonResponse(stream, response);
-        }
-
-        foreach (var chat in _chatsById.Values)
-        {
-            chat.ConnectedClients.Remove(client);
+            if (request.Type != "download_file")
+            {
+                await SendJsonResponse(stream, response);
+            }
         }
     }
 

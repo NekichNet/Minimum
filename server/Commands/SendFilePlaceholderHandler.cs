@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Minimum.Repositories.Interfaces;
+using Newtonsoft.Json;
 using server.Models;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
@@ -11,18 +12,19 @@ public class SendFilePlaceholderHandler : CommandHandler
     private readonly string _uploadDir;
 
     public SendFilePlaceholderHandler(
-        ConcurrentDictionary<int, User> usersById,
-        ConcurrentDictionary<string, User> usersByName,
+        IUserRepository userRepository,
+        IChatRepository chatRepository,
+        IMessageRepository messageRepository,
         ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<int, Chat> chatsById,
-        string uploadDir) : base(usersById, usersByName, tokens, chatsById)
+        string uploadDir) : base(userRepository, chatRepository, messageRepository, tokens)
     {
         _uploadDir = uploadDir;
     }
 
-    public override Response Handle(Request request, NetworkStream stream, TcpClient client)
+    public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
-        if (!ValidateToken(request.Token, out User user))
+        var (isValid, user) = await ValidateTokenAsync(request.Token);
+        if (!isValid)
         {
             return new Response { Success = false, Message = "Невалидный токен." };
         }
@@ -32,13 +34,14 @@ public class SendFilePlaceholderHandler : CommandHandler
             return new Response { Success = false, Message = "ID чата не указан." };
         }
 
-        if (!ChatsById.TryGetValue(request.ChatId.Value, out Chat chat))
+        var chat = await ChatRepository.GetChatByIdAsync(request.ChatId.Value);
+        if (chat == null)
         {
             return new Response { Success = false, Message = "Чат не найден." };
         }
 
-        var fileMessage = new Message(request.FileName, request.FileSize, request.FileId, user.Id, user);
-        chat.Messages.Add(fileMessage);
+        var fileMessage = new Message(request.FileName, request.FileSize, request.FileId, user.Id, chat.Id, user, chat);
+        await MessageRepository.AddMessageAsync(fileMessage);
 
         BroadcastMessageToChat(chat, fileMessage, user);
 

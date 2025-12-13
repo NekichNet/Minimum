@@ -1,4 +1,6 @@
-﻿using ReactiveUI;
+﻿using Minimum.Services;
+using Minimum.Views;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
@@ -54,11 +56,34 @@ namespace Minimum.ViewModels
 
         private async Task GoToSignUp()
         {
-            // Любой код для перехода на страницу регистрации
+            var nav = new NavigationService();
+            nav.NavigateTo<SignUpView>();
+            await Task.CompletedTask;
         }
+
+
         private async Task TrySignIn()
         {
-            // Любой код для входа в аккаунт
+            try
+            {
+                var scm = new Services.ServerConnectionManager();
+                await scm.StartConnection();
+                var resp = await scm.SignIn(Input_Login, Input_Password);
+
+                if (resp != null && resp.Success)
+                {
+                    var nav = new NavigationService();
+                    nav.NavigateTo<ChatView>();
+                }
+                else
+                {
+                    // можно показать ошибку пользователю
+                }
+            }
+            catch
+            {
+                // логика обработки ошибок
+            }
         }
     }
 }

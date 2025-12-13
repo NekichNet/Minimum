@@ -13,4 +13,6 @@ public class User
     public List<Message> Messages { get; set; } = new List<Message>();
     [JsonIgnore]
     public List<Chat> Chats { get; set; } = new List<Chat>();
+    [JsonIgnore]
+    public List<AuthToken> AuthTokens { get; set; } = new List<AuthToken>();
 }

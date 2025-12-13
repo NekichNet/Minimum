@@ -12,7 +12,6 @@ namespace server.Services;
 public class TcpChatService
 {
     private readonly TcpListener _listener;
-    private readonly ConcurrentDictionary<string, string> _tokens = new();
     private readonly IUserRepository _userRepository;
     private readonly IChatRepository _chatRepository;
     private readonly IMessageRepository _messageRepository;
@@ -33,14 +32,15 @@ public class TcpChatService
 
         _handlers = new Dictionary<string, Func<Request, NetworkStream, TcpClient, Task<Response>>>
         {
-            ["register"] = (req, s, c) => new RegisterHandler(_userRepository, _chatRepository, _messageRepository, _tokens).HandleAsync(req, s, c),
-            ["login"] = (req, s, c) => new LoginHandler(_userRepository, _chatRepository, _messageRepository, _tokens).HandleAsync(req, s, c),
-            ["create_chat"] = (req, s, c) => new CreateChatHandler(_userRepository, _chatRepository, _messageRepository, _tokens).HandleAsync(req, s, c),
-            ["send_message"] = (req, s, c) => new SendMessageHandler(_userRepository, _chatRepository, _messageRepository, _tokens, _uploadDir).HandleAsync(req, s, c),
-            ["send_file_placeholder"] = (req, s, c) => new SendFilePlaceholderHandler(_userRepository, _chatRepository, _messageRepository, _tokens, _uploadDir).HandleAsync(req, s, c),
-            ["upload_file_chunk"] = (req, s, c) => new UploadFileChunkHandler(_userRepository, _chatRepository, _messageRepository, _tokens, _uploadDir).HandleAsync(req, s, c),
-            ["download_file"] = (req, s, c) => new DownloadFileHandler(_userRepository, _chatRepository, _messageRepository, _tokens, _uploadDir).HandleAsync(req, s, c),
-            ["join_chat"] = (req, s, c) => new JoinChatHandler(_userRepository, _chatRepository, _messageRepository, _tokens).HandleAsync(req, s, c),
+            ["register"] = (req, s, c) => new RegisterHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
+            ["login"] = (req, s, c) => new LoginHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
+            ["create_chat"] = (req, s, c) => new CreateChatHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
+            ["send_message"] = (req, s, c) => new SendMessageHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir).HandleAsync(req, s, c),
+            ["send_file_placeholder"] = (req, s, c) => new SendFilePlaceholderHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir).HandleAsync(req, s, c),
+            ["upload_file_chunk"] = (req, s, c) => new UploadFileChunkHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir).HandleAsync(req, s, c),
+            ["download_file"] = (req, s, c) => new DownloadFileHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir).HandleAsync(req, s, c),
+            ["join_chat"] = (req, s, c) => new JoinChatHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
+            ["validate_token"] = (req, s, c) => new ValidateTokenHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
         };
     }
 

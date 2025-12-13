@@ -1,5 +1,8 @@
 <Styles xmlns="https://github.com/avaloniaui"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Style Selector="AccessText.Standart">
+		<Setter Property="FontFamily" Value="Gilroy"></Setter>
+	</Style>
 	<Style Selector="Window.Standart">
 		<Setter Property="Template">
 			<Setter.Value>

@@ -1,5 +1,6 @@
 ﻿using server.Models;
 using System.Collections.Concurrent;
+using System.Net.Sockets;
 
 namespace server.Commands;
 
@@ -11,14 +12,20 @@ public class RegisterHandler : CommandHandler
         ConcurrentDictionary<string, string> tokens,
         ConcurrentDictionary<int, Chat> chatsById) : base(usersById, usersByName, tokens, chatsById) { }
 
-    public override Response Handle(Request request)
+    public override Response Handle(Request request, NetworkStream stream, TcpClient client)
     {
         if (UsersByName.ContainsKey(request.Username))
         {
             return new Response { Success = false, Message = "Пользователь уже существует." };
         }
 
-        var newUser = new User { Id = 1, Name = request.Username, Password = request.Password }; // ДОБАВИТЬ ID ОТ БД
+        var newUser = new User
+        {
+            Id = UsersById.Count + 1,
+            Name = request.Username,
+            Password = request.Password
+        };
+
         UsersById.TryAdd(newUser.Id, newUser);
         UsersByName.TryAdd(newUser.Name, newUser);
 

@@ -1,4 +1,6 @@
-﻿namespace server.Models;
+﻿using System.Net.Sockets;
+
+namespace server.Models;
 
 public class Chat
 {
@@ -7,4 +9,6 @@ public class Chat
 
     public List<User> Users { get; set; } = new List<User>();
     public List<Message> Messages { get; set; } = new List<Message>();
+
+    public List<TcpClient> ConnectedClients { get; set; } = new List<TcpClient>();
 }

@@ -1,5 +1,6 @@
 ﻿using server.Models;
 using System.Collections.Concurrent;
+using System.Net.Sockets;
 
 namespace server.Commands;
 
@@ -22,7 +23,7 @@ public abstract class CommandHandler
         ChatsById = chatsById;
     }
 
-    public abstract Response Handle(Request request);
+    public abstract Response Handle(Request request, NetworkStream stream, TcpClient client);
 
     protected bool ValidateToken(string token, out User user)
     {
@@ -31,7 +32,6 @@ public abstract class CommandHandler
         {
             return false;
         }
-
         return UsersByName.TryGetValue(username, out user);
     }
 }

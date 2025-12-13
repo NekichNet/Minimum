@@ -6,11 +6,11 @@ using System.Text;
 
 namespace server.Commands;
 
-public class SendMessageHandler : CommandHandler
+public class SendFilePlaceholderHandler : CommandHandler
 {
     private readonly string _uploadDir;
 
-    public SendMessageHandler(
+    public SendFilePlaceholderHandler(
         ConcurrentDictionary<int, User> usersById,
         ConcurrentDictionary<string, User> usersByName,
         ConcurrentDictionary<string, string> tokens,
@@ -37,19 +37,19 @@ public class SendMessageHandler : CommandHandler
             return new Response { Success = false, Message = "Чат не найден." };
         }
 
-        var message = new Message(user.Id, request.MessageText, user);
-        chat.Messages.Add(message);
+        var fileMessage = new Message(request.FileName, request.FileSize, request.FileId, user.Id, user);
+        chat.Messages.Add(fileMessage);
 
-        BroadcastMessageToChat(chat, message, user);
+        BroadcastMessageToChat(chat, fileMessage, user);
 
-        return new Response { Success = true, Message = "Сообщение отправлено." };
+        return new Response { Success = true, Message = "Плейсхолдер файла отправлен." };
     }
 
     private void BroadcastMessageToChat(Chat chat, Message message, User author)
     {
         var broadcastMsg = new
         {
-            type = "message_broadcast",
+            type = "file_placeholder_broadcast",
             id = message.Id,
             text = message.Text,
             author = author.Name,

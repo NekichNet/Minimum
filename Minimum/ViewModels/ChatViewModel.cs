@@ -30,5 +30,7 @@ namespace Minimum.ViewModels
             Id = chat.Id;
             Name = chat.Name;
         }
+
+        public void AddMessage(Message msg) => Messages.Add(msg);
     }
 }

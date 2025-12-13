@@ -26,7 +26,9 @@ namespace Minimum.ViewModels
 
 
         private int _currentIndex = 1; // Показывает индекс выбранного в данный момент поля
-        public int CurrentIndex { get 
+        public int CurrentIndex
+        {
+            get
             {
                 return _currentIndex;
             }
@@ -42,8 +44,9 @@ namespace Minimum.ViewModels
 
         public ChatChooserOption SettingOption { get; set; } = new ChatChooserOption("Настройки");
 
-        private ObservableCollection<ChatChooserOption> _chats; 
-        public ObservableCollection<ChatChooserOption> Chats {
+        private ObservableCollection<ChatChooserOption> _chats;
+        public ObservableCollection<ChatChooserOption> Chats
+        {
             get
             {
                 return _chats;
@@ -54,10 +57,6 @@ namespace Minimum.ViewModels
                 _chats.Insert(0, SettingOption);
             }
         }
-
-
-
-
 
 
         public ChatListViewModel(ObservableCollection<ChatChooserOption> chats)
@@ -77,6 +76,6 @@ namespace Minimum.ViewModels
             */
             CurrentIndex = 0;
         }
-        
+
     }
 }

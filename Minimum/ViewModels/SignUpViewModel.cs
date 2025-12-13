@@ -43,10 +43,13 @@ namespace Minimum.ViewModels
             await req.StartConnection();
             var res = await req.SignUp(Input_Login, Input_Password);
         }
+
+
         private async Task GoToSignIn()
         {
-            // любой код для перехода на страницу входа
+            var nav = new NavigationService();
+            nav.NavigateTo<SignInView>();
+            await Task.CompletedTask;
         }
-
     }
 }

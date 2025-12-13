@@ -1,4 +1,5 @@
-﻿using server.Models;
+﻿using Minimum.Repositories.Interfaces;
+using server.Models;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 
@@ -7,14 +8,15 @@ namespace server.Commands;
 public class JoinChatHandler : CommandHandler
 {
     public JoinChatHandler(
-        ConcurrentDictionary<int, User> usersById,
-        ConcurrentDictionary<string, User> usersByName,
-        ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<int, Chat> chatsById) : base(usersById, usersByName, tokens, chatsById) { }
+        IUserRepository userRepository,
+        IChatRepository chatRepository,
+        IMessageRepository messageRepository,
+        ConcurrentDictionary<string, string> tokens) : base(userRepository, chatRepository, messageRepository, tokens) { }
 
-    public override Response Handle(Request request, NetworkStream stream, TcpClient client)
+    public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
-        if (!ValidateToken(request.Token, out User user))
+        var (isValid, user) = await ValidateTokenAsync(request.Token);
+        if (!isValid)
         {
             return new Response { Success = false, Message = "Невалидный токен." };
         }
@@ -24,7 +26,8 @@ public class JoinChatHandler : CommandHandler
             return new Response { Success = false, Message = "ID чата не указан." };
         }
 
-        if (!ChatsById.TryGetValue(request.ChatId.Value, out Chat chat))
+        var chat = await ChatRepository.GetChatByIdAsync(request.ChatId.Value);
+        if (chat == null)
         {
             return new Response { Success = false, Message = "Чат не найден." };
         }
@@ -32,11 +35,6 @@ public class JoinChatHandler : CommandHandler
         if (!chat.Users.Contains(user))
         {
             return new Response { Success = false, Message = "Пользователь не состоит в этом чате." };
-        }
-
-        if (!chat.ConnectedClients.Contains(client))
-        {
-            chat.ConnectedClients.Add(client);
         }
 
         return new Response { Success = true, Message = "Вы присоединились к чату." };

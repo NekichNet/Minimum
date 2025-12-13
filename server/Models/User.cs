@@ -1,4 +1,6 @@
-﻿namespace server.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace server.Models;
 
 public class User
 {
@@ -7,5 +9,8 @@ public class User
     public string Password { get; set; } = string.Empty;
     public string AvatarPath { get; set; }
 
-    public ICollection<Message> Messages { get; set; } = new List<Message>();
+    [JsonIgnore]
+    public List<Message> Messages { get; set; } = new List<Message>();
+    [JsonIgnore]
+    public List<Chat> Chats { get; set; } = new List<Chat>();
 }

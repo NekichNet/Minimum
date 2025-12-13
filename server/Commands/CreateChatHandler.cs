@@ -1,4 +1,5 @@
-﻿using server.Models;
+﻿using Minimum.Repositories.Interfaces;
+using server.Models;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 
@@ -7,22 +8,24 @@ namespace server.Commands;
 public class CreateChatHandler : CommandHandler
 {
     public CreateChatHandler(
-        ConcurrentDictionary<int, User> usersById,
-        ConcurrentDictionary<string, User> usersByName,
-        ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<int, Chat> chatsById) : base(usersById, usersByName, tokens, chatsById) { }
+        IUserRepository userRepository,
+        IChatRepository chatRepository,
+        IMessageRepository messageRepository,
+        ConcurrentDictionary<string, string> tokens) : base(userRepository, chatRepository, messageRepository, tokens) { }
 
-    public override Response Handle(Request request, NetworkStream stream, TcpClient client)
+    public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
-        if (!ValidateToken(request.Token, out User user))
+        var (isValid, user) = await ValidateTokenAsync(request.Token);
+        if (!isValid)
         {
             return new Response { Success = false, Message = "Невалидный токен." };
         }
 
-        var newChat = new Chat { Id = 1, Name = request.ChatName }; // починить когда появится бд
-        newChat.Users.Add(user);
+        var newChat = new Chat { Name = request.ChatName };
+        await ChatRepository.AddChatAsync(newChat);
 
-        ChatsById.TryAdd(newChat.Id, newChat);
+        newChat.Users.Add(user);
+        await ChatRepository.UpdateChatAsync(newChat);
 
         return new Response { Success = true, Message = "Чат создан.", ChatId = newChat.Id };
     }

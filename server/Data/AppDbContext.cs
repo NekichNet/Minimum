@@ -19,14 +19,18 @@ namespace server.Data
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Author)
                 .WithMany(u => u.Messages)
-                .HasForeignKey(m => m.AuthorId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(m => m.AuthorId);
 
             modelBuilder.Entity<Message>()
                 .HasOne(m => m.Chat)
                 .WithMany(c => c.Messages)
                 .HasForeignKey(m => m.ChatId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.Chats)
+                .WithMany(c => c.Users)
+                .UsingEntity(j => j.ToTable("UserChats"));
 
             base.OnModelCreating(modelBuilder);
         }

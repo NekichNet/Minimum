@@ -1,42 +1,51 @@
 ﻿﻿using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
-using server.Commands;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Minimum.Repositories.Interfaces;
 using server.Data;
 using server.Models;
+using server.Repositories;
 using server.Services;
 using server.Utils;
-using System.Collections.Concurrent;
 
 namespace server;
 
 internal class Program
 {
-    private static int _userIdCounter = 1;
-    private static int _chatIdCounter = 1;
-
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         Env.Load("../../../");
 
         var connectionString = Env.GetString("DB_CONNECTION_STRING")
             ?? throw new InvalidOperationException("Connection string not configured.");
 
-        var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
-        optionsBuilder.UseNpgsql(connectionString);
+        var builder = Host.CreateDefaultBuilder(args);
 
-        using var db = new AppDbContext(optionsBuilder.Options);
+        builder.ConfigureServices((context, services) =>
+        {
+            services.AddDbContext<AppDbContext>(options =>
+                options.UseNpgsql(connectionString));
 
-        Console.WriteLine("EF Core connected to db!");
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IChatRepository, ChatRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
 
-        var server = new TcpChatService(8080);
-        server.Start();
+            services.AddSingleton<TcpChatService>(provider =>
+            {
+                var userRepository = provider.GetRequiredService<IUserRepository>();
+                var chatRepository = provider.GetRequiredService<IChatRepository>();
+                var messageRepository = provider.GetRequiredService<IMessageRepository>();
+                return new TcpChatService(8080, userRepository, chatRepository, messageRepository);
+            });
+        });
 
+        var host = builder.Build();
 
+        var server = host.Services.GetRequiredService<TcpChatService>();
+        _ = Task.Run(() => server.Start());
 
-        var usersById = new ConcurrentDictionary<int, User>();
-        var usersByName = new ConcurrentDictionary<string, User>();
-        var tokens = new ConcurrentDictionary<string, string>();
-        var chatsById = new ConcurrentDictionary<int, Chat>();
+        _ = Task.Run(async () => await host.RunAsync());
 
         Console.WriteLine("CLI сервер запущен. Введите команду (или 'exit' для выхода):");
 
@@ -52,23 +61,11 @@ internal class Program
                 break;
             }
 
-            CommandHandler handler = request.Type switch
+            Response response = new Response
             {
-                "register" => new RegisterHandler(usersById, usersByName, tokens, chatsById),
-                "login" => new LoginHandler(usersById, usersByName, tokens, chatsById),
-                "create-chat" => new CreateChatHandler(usersById, usersByName, tokens, chatsById),
-                "send-message" => new SendMessageHandler(usersById, usersByName, tokens, chatsById),
-                _ => null
+                Success = true,
+                Message = $"Команда '{request.Type}' передана на обработку."
             };
-
-            if (handler == null)
-            {
-                Console.WriteLine($"[LOG] Неизвестная команда: {request.Type}");
-                continue;
-            }
-
-
-            Response response = handler.Handle(request);
 
             // Логирование
             Console.WriteLine($"[LOG] Команда: {request.Type}, Пользователь: {request.Username ?? "N/A"}");

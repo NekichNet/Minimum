@@ -19,20 +19,23 @@ public class Message
 
     public Message() { }
 
-    public Message(int id, string text, User author)
+    public Message(string text, int authorId, int chatId, User author, Chat chat)
     {
-        Id = id;
         Text = text;
-        Time = DateTime.UtcNow;
-        AuthorId = author.Id;
+        AuthorId = authorId;
+        ChatId = chatId;
         Author = author;
+        Chat = chat;
+        Time = DateTime.UtcNow;
     }
 
-    public Message(string fileName, long fileSize, string fileId, int authorId, User author)
+    public Message(string fileName, long fileSize, string fileId, int authorId, int chatId, User author, Chat chat)
     {
         Text = $"Файл: {fileName}";
         AuthorId = authorId;
+        ChatId = chatId;
         Author = author;
+        Chat = chat;
         Time = DateTime.UtcNow;
         IsFile = true;
         FileName = fileName;

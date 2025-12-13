@@ -1,4 +1,5 @@
-﻿using server.Models;
+﻿using Minimum.Repositories.Interfaces;
+using server.Models;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
 
@@ -7,14 +8,15 @@ namespace server.Commands;
 public class LoginHandler : CommandHandler
 {
     public LoginHandler(
-        ConcurrentDictionary<int, User> usersById,
-        ConcurrentDictionary<string, User> usersByName,
-        ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<int, Chat> chatsById) : base(usersById, usersByName, tokens, chatsById) { }
+        IUserRepository userRepository,
+        IChatRepository chatRepository,
+        IMessageRepository messageRepository,
+        ConcurrentDictionary<string, string> tokens) : base(userRepository, chatRepository, messageRepository, tokens) { }
 
-    public override Response Handle(Request request, NetworkStream stream, TcpClient client)
+    public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
-        if (UsersByName.TryGetValue(request.Username, out User user) && user.Password == request.Password)
+        var user = await UserRepository.GetUserByNameAsync(request.Username);
+        if (user != null && user.Password == request.Password)
         {
             string token = Guid.NewGuid().ToString();
             UserTokens.TryAdd(token, user.Name);

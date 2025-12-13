@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Minimum.Repositories.Interfaces;
+using Newtonsoft.Json;
 using server.Models;
 using System.Collections.Concurrent;
 using System.Net.Sockets;
@@ -11,18 +12,19 @@ public class SendMessageHandler : CommandHandler
     private readonly string _uploadDir;
 
     public SendMessageHandler(
-        ConcurrentDictionary<int, User> usersById,
-        ConcurrentDictionary<string, User> usersByName,
+        IUserRepository userRepository,
+        IChatRepository chatRepository,
+        IMessageRepository messageRepository,
         ConcurrentDictionary<string, string> tokens,
-        ConcurrentDictionary<int, Chat> chatsById,
-        string uploadDir) : base(usersById, usersByName, tokens, chatsById)
+        string uploadDir) : base(userRepository, chatRepository, messageRepository, tokens)
     {
         _uploadDir = uploadDir;
     }
 
-    public override Response Handle(Request request, NetworkStream stream, TcpClient client)
+    public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
-        if (!ValidateToken(request.Token, out User user))
+        var (isValid, user) = await ValidateTokenAsync(request.Token);
+        if (!isValid)
         {
             return new Response { Success = false, Message = "Невалидный токен." };
         }
@@ -32,13 +34,14 @@ public class SendMessageHandler : CommandHandler
             return new Response { Success = false, Message = "ID чата не указан." };
         }
 
-        if (!ChatsById.TryGetValue(request.ChatId.Value, out Chat chat))
+        var chat = await ChatRepository.GetChatByIdAsync(request.ChatId.Value);
+        if (chat == null)
         {
             return new Response { Success = false, Message = "Чат не найден." };
         }
 
-        var message = new Message(user.Id, request.MessageText, user);
-        chat.Messages.Add(message);
+        var message = new Message(request.MessageText, user.Id, chat.Id, user, chat);
+        await MessageRepository.AddMessageAsync(message);
 
         BroadcastMessageToChat(chat, message, user);
 

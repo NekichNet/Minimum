@@ -8,7 +8,6 @@
         x:Class="Minimum.Views.MainWindow"
         Classes="Standart"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Minimum"
-        Classes="Standart">
+        Title="Minimum">
         <views:MainView />
 </Window>

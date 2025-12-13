@@ -21,7 +21,7 @@ namespace server.Repositories
 
         public async Task AddChatAsync(Chat chat)
         {
-            _db.Chats.Add(chat);
+            _ = _db.Chats.AddAsync(chat);
             await _db.SaveChangesAsync();
         }
 

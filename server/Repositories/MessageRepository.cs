@@ -22,7 +22,7 @@ namespace server.Repositories
 
         public async Task AddMessageAsync(Message message)
         {
-            _db.Messages.Add(message);
+            _ = _db.Messages.AddAsync(message);
             await _db.SaveChangesAsync();
         }
 

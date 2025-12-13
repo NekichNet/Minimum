@@ -52,23 +52,12 @@ internal class Program
                 break;
             }
 
-            CommandHandler handler = request.Type switch
+
+            Response response = new Response
             {
-                "register" => new RegisterHandler(usersById, usersByName, tokens, chatsById),
-                "login" => new LoginHandler(usersById, usersByName, tokens, chatsById),
-                "create-chat" => new CreateChatHandler(usersById, usersByName, tokens, chatsById),
-                "send-message" => new SendMessageHandler(usersById, usersByName, tokens, chatsById),
-                _ => null
+                Success = true,
+                Message = $"Команда '{request.Type}' передана на обработку."
             };
-
-            if (handler == null)
-            {
-                Console.WriteLine($"[LOG] Неизвестная команда: {request.Type}");
-                continue;
-            }
-
-
-            Response response = handler.Handle(request);
 
             // Логирование
             Console.WriteLine($"[LOG] Команда: {request.Type}, Пользователь: {request.Username ?? "N/A"}");

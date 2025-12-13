@@ -41,7 +41,7 @@ namespace Minimum.ViewModels
         {
             var req = new ServerConnectionManager();
             await req.StartConnection();
-            await req.SignUp(Input_Login, Input_Password);
+            var res = await req.SignUp(Input_Login, Input_Password);
         }
         private async Task GoToSignIn()
         {

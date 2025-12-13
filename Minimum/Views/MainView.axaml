@@ -3,6 +3,7 @@
 			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="using:Minimum.Views"
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:minimum="using:Minimum"
 			 xmlns:vm="using:Minimum.ViewModels"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="Minimum.Views.MainView"
@@ -11,5 +12,8 @@
 	
 		<vm:MainViewModel />
 	</Design.DataContext>
+	<Grid>
+		<minimum:SignUpView></minimum:SignUpView>
+	</Grid>
 	
 </UserControl>

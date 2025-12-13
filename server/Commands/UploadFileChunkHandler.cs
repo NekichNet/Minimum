@@ -6,11 +6,11 @@ using System.Text;
 
 namespace server.Commands;
 
-public class SendMessageHandler : CommandHandler
+public class UploadFileChunkHandler : CommandHandler
 {
     private readonly string _uploadDir;
 
-    public SendMessageHandler(
+    public UploadFileChunkHandler(
         ConcurrentDictionary<int, User> usersById,
         ConcurrentDictionary<string, User> usersByName,
         ConcurrentDictionary<string, string> tokens,
@@ -18,6 +18,7 @@ public class SendMessageHandler : CommandHandler
         string uploadDir) : base(usersById, usersByName, tokens, chatsById)
     {
         _uploadDir = uploadDir;
+        Directory.CreateDirectory(_uploadDir);
     }
 
     public override Response Handle(Request request, NetworkStream stream, TcpClient client)
@@ -27,35 +28,49 @@ public class SendMessageHandler : CommandHandler
             return new Response { Success = false, Message = "Невалидный токен." };
         }
 
-        if (request.ChatId == null)
+        if (string.IsNullOrEmpty(request.FileId))
         {
-            return new Response { Success = false, Message = "ID чата не указан." };
+            return new Response { Success = false, Message = "ID файла не указан." };
         }
 
-        if (!ChatsById.TryGetValue(request.ChatId.Value, out Chat chat))
+        string filePath = Path.Combine(_uploadDir, request.FileId);
+
+        try
         {
-            return new Response { Success = false, Message = "Чат не найден." };
+            if (request.FileData != null)
+            {
+                using var fs = new FileStream(filePath, FileMode.Append, FileAccess.Write);
+                fs.Write(request.FileData, 0, request.FileData.Length);
+            }
+
+            if (request.IsUploadComplete)
+            {
+                foreach (var chat in ChatsById.Values)
+                {
+                    var msg = chat.Messages.FirstOrDefault(m => m.FileId == request.FileId);
+                    if (msg != null)
+                    {
+                        msg.IsUploaded = true;
+                        BroadcastFileUpdate(chat, msg, user);
+                        break;
+                    }
+                }
+            }
+
+            return new Response { Success = true, Message = "Часть файла загружена." };
         }
-
-        var message = new Message(user.Id, request.MessageText, user);
-        chat.Messages.Add(message);
-
-        BroadcastMessageToChat(chat, message, user);
-
-        return new Response { Success = true, Message = "Сообщение отправлено." };
+        catch (Exception ex)
+        {
+            return new Response { Success = false, Message = "Ошибка загрузки файла: " + ex.Message };
+        }
     }
 
-    private void BroadcastMessageToChat(Chat chat, Message message, User author)
+    private void BroadcastFileUpdate(Chat chat, Message message, User author)
     {
         var broadcastMsg = new
         {
-            type = "message_broadcast",
+            type = "file_uploaded_broadcast",
             id = message.Id,
-            text = message.Text,
-            author = author.Name,
-            time = message.Time,
-            isFile = message.IsFile,
-            fileName = message.FileName,
             fileId = message.FileId,
             isUploaded = message.IsUploaded
         };

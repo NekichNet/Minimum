@@ -15,19 +15,24 @@ public class TcpChatService
     private readonly ConcurrentDictionary<string, User> _usersByName = new();
     private readonly ConcurrentDictionary<string, string> _tokens = new();
     private readonly ConcurrentDictionary<int, Chat> _chatsById = new();
+    private readonly string _uploadDir = "./uploads";
 
-    private readonly Dictionary<string, Func<Request, Response>> _handlers;
+    private readonly Dictionary<string, Func<Request, NetworkStream, TcpClient, Response>> _handlers;
 
     public TcpChatService(int port)
     {
         _listener = new TcpListener(IPAddress.Loopback, port);
 
-        _handlers = new Dictionary<string, Func<Request, Response>>
+        _handlers = new Dictionary<string, Func<Request, NetworkStream, TcpClient, Response>>
         {
-            ["register"] = req => new RegisterHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req),
-            ["login"] = req => new LoginHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req),
-            ["create_chat"] = req => new CreateChatHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req),
-            ["send_message"] = req => new SendMessageHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req),
+            ["register"] = (req, s, c) => new RegisterHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req, s, c),
+            ["login"] = (req, s, c) => new LoginHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req, s, c),
+            ["create_chat"] = (req, s, c) => new CreateChatHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req, s, c),
+            ["send_message"] = (req, s, c) => new SendMessageHandler(_usersById, _usersByName, _tokens, _chatsById, _uploadDir).Handle(req, s, c),
+            ["join_chat"] = (req, s, c) => new JoinChatHandler(_usersById, _usersByName, _tokens, _chatsById).Handle(req, s, c),
+            ["send_file_placeholder"] = (req, s, c) => new SendFilePlaceholderHandler(_usersById, _usersByName, _tokens, _chatsById, _uploadDir).Handle(req, s, c),
+            ["upload_file_chunk"] = (req, s, c) => new UploadFileChunkHandler(_usersById, _usersByName, _tokens, _chatsById, _uploadDir).Handle(req, s, c),
+            ["download_file"] = (req, s, c) => new DownloadFileHandler(_usersById, _usersByName, _tokens, _chatsById, _uploadDir).Handle(req, s, c),
         };
     }
 
@@ -65,7 +70,7 @@ public class TcpChatService
             {
                 request = JsonConvert.DeserializeObject<Request>(data);
             }
-            catch (System.Text.Json.JsonException)
+            catch (JsonException)
             {
                 await SendJsonResponse(stream, new Response { Success = false, Message = "Неверный формат JSON." });
                 continue;
@@ -80,7 +85,7 @@ public class TcpChatService
             Response response;
             if (_handlers.TryGetValue(request.Type, out var handler))
             {
-                response = handler(request);
+                response = handler(request, stream, client);
             }
             else
             {
@@ -88,6 +93,11 @@ public class TcpChatService
             }
 
             await SendJsonResponse(stream, response);
+        }
+
+        foreach (var chat in _chatsById.Values)
+        {
+            chat.ConnectedClients.Remove(client);
         }
     }
 

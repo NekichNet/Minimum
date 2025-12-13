@@ -11,9 +11,6 @@ namespace server;
 
 internal class Program
 {
-    private static int _userIdCounter = 1;
-    private static int _chatIdCounter = 1;
-
     static void Main(string[] args)
     {
         Env.Load("../../../");

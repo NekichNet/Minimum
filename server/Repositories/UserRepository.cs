@@ -21,7 +21,7 @@ namespace server.Repositories
 
         public async Task AddUserAsync(User user)
         {
-            _db.Users.Add(user);
+            await _db.Users.AddAsync(user);
             await _db.SaveChangesAsync();
         }
 

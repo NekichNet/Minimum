@@ -2,11 +2,6 @@
 using Minimum.Repositories.Interfaces;
 using server.Data;
 using server.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace server.Repositories
 {
@@ -18,10 +13,9 @@ namespace server.Repositories
             _db = db;
         }
 
-
         public async Task AddChatAsync(Chat chat)
         {
-            _db.Chats.Add(chat);
+            await _db.Chats.AddAsync(chat);
             await _db.SaveChangesAsync();
         }
 

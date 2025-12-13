@@ -13,10 +13,10 @@
 					<Grid HorizontalAlignment="Stretch">
                         <TextBlock Text="{Binding Name}"></TextBlock>
 
-                        <Button Content="{Binding Name}" 
+                        <!--<Button Content="{Binding Name}" 
                                 IsVisible="{Binding IsSettings}" 
                                 HorizontalAlignment="Stretch"
-                                Command="{Binding DataContext.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                                Command="{Binding DataContext.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" />-->
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

@@ -11,5 +11,5 @@
         Icon="/Assets/avalonia-logo.ico"
         Title="Minimum">
 
-    <views:ChatView />
+    <views:MainView />
 </Window>

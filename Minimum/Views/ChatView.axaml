@@ -5,16 +5,19 @@
 			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
 			 xmlns:vm="using:Minimum.ViewModels"
 			 xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:local="using:Minimum.Views"
 			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
 			 x:Class="Minimum.Views.ChatView" x:DataType="vm:ChatViewModel">
 	<Grid>
 		<Grid.RowDefinitions>
+			<RowDefinition Height="60"></RowDefinition>
 			<RowDefinition></RowDefinition>
 			<RowDefinition Height="auto"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<ListBox Name="MessageListBox" Grid.Row="0"></ListBox>
-		<Border Grid.Row="1">
+		<local:ChatHeaderView Grid.Row="0"></local:ChatHeaderView>
+		<ListBox Name="MessageListBox" Grid.Row="1"></ListBox>
+		<Border Grid.Row="2">
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition></ColumnDefinition>
@@ -22,7 +25,7 @@
 					<ColumnDefinition Width="auto"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
 
-				<TextBox Name="InputTextBox" Grid.Column="0" Margin="3 3 1.5 1.5" VerticalAlignment="Bottom"></TextBox>
+				<TextBox Name="InputTextBox" Grid.Column="0" Margin="3 0 3 1.5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"></TextBox>
 				<Button Name="AttachFileButton" Grid.Column="1" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 					<iconPacks:PackIconMaterial Kind="AttachmentPlus"></iconPacks:PackIconMaterial>
 				</Button>

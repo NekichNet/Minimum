@@ -1,10 +1,13 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Minimum"
+             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
              x:Class="Minimum.App"
-             RequestedThemeVariant="Dark">
-
-
+             RequestedThemeVariant="Default">
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="avares://IconPacks.Avalonia.Material/Material.axaml" />
+    </Application.Styles>
     <Application.DataTemplates>
         <local:ViewLocator/>
     </Application.DataTemplates>

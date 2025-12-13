@@ -12,4 +12,11 @@ public partial class SignUpView : UserControl
         InitializeComponent();
         DataContext = new SignUpViewModel();
     }
+
+    public SignUpViewModel? ViewModel => DataContext as SignUpViewModel;
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
 }

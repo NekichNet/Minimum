@@ -1,7 +1,9 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Minimum.ViewModels;
+using Minimum.Views;
 using System;
 using System.Threading.Tasks;
 
@@ -18,9 +20,13 @@ public partial class SignInUpView : Window
     public SignInUpView(bool startWithSignUp) : this()
     {
         if (startWithSignUp)
+        {
             ShowSignUpView();
+        }
         else
+        {
             ShowSignInView();
+        }
     }
 
     private void InitializeComponent()
@@ -53,5 +59,36 @@ public partial class SignInUpView : Window
     {
         return this.FindControl<ContentControl>("ContentHost")
             ?? throw new InvalidOperationException("ContentHost не найден в разметке");
+    }
+
+
+    private void SubscribeAuth(UserControl view)
+    {
+        if (view.DataContext is SignInViewModel signInVm)
+        {
+            signInVm.Authenticated += token => OnAuthenticated(token);
+        }
+        else if (view.DataContext is SignUpViewModel signUpVm)
+        {
+            signUpVm.Authenticated += token => OnAuthenticated(token);
+        }
+    }
+
+
+    private void OnAuthenticated(string token)
+    {
+        // Здесь можно сохранить token
+
+        Dispatcher.UIThread.Post(async () =>
+        {
+            var mainWindow = new MainWindow
+            {
+                DataContext = new MainViewModel()
+            };
+
+            mainWindow.Show();
+            await Task.Delay(1); 
+            this.Close();
+        });
     }
 }

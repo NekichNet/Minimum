@@ -15,8 +15,8 @@
         <StackPanel Margin="15" Spacing="10" VerticalAlignment="Center">
 			<TextBox Text="{Binding Input_Login}" Watermark="{Binding Text_LoginWatermark}"></TextBox>
 			
-            <TextBox  PasswordChar="{Binding Text_PasswordChar}" Text="{Binding Input_Login}" Watermark="{Binding Text_PasswordWatermark}"></TextBox>
-            <TextBox  PasswordChar="{Binding Text_PasswordChar}" Text="{Binding Input_Login}" Watermark="{Binding Text_RepeatPasswordWatermark}"></TextBox>
+            <TextBox  PasswordChar="{Binding Text_PasswordChar}" Text="{Binding Input_Password}" Watermark="{Binding Text_PasswordWatermark}"></TextBox>
+            <TextBox  PasswordChar="{Binding Text_PasswordChar}" Text="{Binding Input_RepeatPassword}" Watermark="{Binding Text_RepeatPasswordWatermark}"></TextBox>
             
             <Button Command="{Binding Click_SignUp}" Content="{Binding Text_ButtonSignUp}" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Button>
         </StackPanel>

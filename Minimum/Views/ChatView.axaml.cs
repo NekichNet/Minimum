@@ -5,11 +5,11 @@ using Minimum.ViewModels;
 
 namespace Minimum.Views;
 
-public partial class ChatListView : UserControl
+public partial class ChatView : UserControl
 {
-    public ChatListView()
+    public ChatView()
     {
         InitializeComponent();
-        DataContext = new ChatListViewModel();
+        DataContext = new ChatViewModel();
     }
 }

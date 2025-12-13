@@ -42,10 +42,12 @@ internal class Program
 
         var host = builder.Build();
 
+        // вот тут сервер запускается
         var server = host.Services.GetRequiredService<TcpChatService>();
         _ = Task.Run(() => server.Start());
-
         _ = Task.Run(async () => await host.RunAsync());
+
+        // а что идёт дальше даже бог не знает
 
         Console.WriteLine("CLI сервер запущен. Введите команду (или 'exit' для выхода):");
 
@@ -80,5 +82,23 @@ internal class Program
                 Console.WriteLine($"ID чата: {response.ChatId}");
             }
         }
+
+        //ConsoleUI Page1UI = new ConsoleUI(
+        //    "Вспомогательная страница",
+        //    new List<MenuOption>
+        //    {
+        //        new MenuOption{Name = "Вау! Кнопка!", CurrentOptionType = OptionType.BUTTON_RETURN}
+        //    }
+        //    );
+
+
+        //ConsoleUI MainUI = new ConsoleUI(
+        //    "Главная страница",
+        //    new List<MenuOption>
+        //    {
+        //        new MenuOption{Name = "Открыть вспомогательное меню", Action = Page1UI.Start}
+        //    }
+        //    );
+        //_ = MainUI.Start();
     }
 }

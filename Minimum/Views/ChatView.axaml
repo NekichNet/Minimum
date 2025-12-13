@@ -1,0 +1,62 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+			 xmlns:compilerservices="using:System.Runtime.CompilerServices"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+			 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+			 xmlns:vm="using:Minimum.ViewModels"
+			 xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+             xmlns:local="using:Minimum.Views"
+			 mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 x:Class="Minimum.Views.ChatView" x:DataType="vm:ChatViewModel">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="60"></RowDefinition>
+			<RowDefinition></RowDefinition>
+			<RowDefinition Height="auto"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<local:ChatHeaderView Grid.Row="0"></local:ChatHeaderView>
+
+		<ListBox Name="MessageListBox" Grid.Row="1" VerticalAlignment="Stretch" ItemsSource="{Binding Messages}">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid HorizontalAlignment="Stretch">
+						<Image></Image> <!-- имаге для групповых чатов -->
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="auto"></ColumnDefinition>
+							<ColumnDefinition></ColumnDefinition>
+						</Grid.ColumnDefinitions>
+						<Grid Grid.Column="1">
+							<Border>
+							</Border>
+							<Grid.RowDefinitions>
+								<RowDefinition></RowDefinition>
+								<RowDefinition Height="auto"></RowDefinition>
+							</Grid.RowDefinitions>
+							<TextBlock Text="{Binding Text}"></TextBlock>
+							<TextBlock Grid.Row="1" Text="{Binding Text}"></TextBlock>
+						</Grid>
+					</Grid>
+				</DataTemplate>
+			</ListBox.ItemTemplate>
+		</ListBox>
+
+		<Border Grid.Row="2">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition></ColumnDefinition>
+					<ColumnDefinition Width="auto"></ColumnDefinition>
+					<ColumnDefinition Width="auto"></ColumnDefinition>
+				</Grid.ColumnDefinitions>
+
+				<TextBox Name="InputTextBox" Grid.Column="0" Margin="3 0 3 1.5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"></TextBox>
+				<Button Name="AttachFileButton" Grid.Column="1" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+					<iconPacks:PackIconMaterial Kind="AttachmentPlus"></iconPacks:PackIconMaterial>
+				</Button>
+				<Button Name="SendButton" Grid.Column="2" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+					<iconPacks:PackIconMaterial Kind="Send"></iconPacks:PackIconMaterial>
+				</Button>
+			</Grid>
+		</Border>
+	</Grid>
+</UserControl>

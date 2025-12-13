@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Minimum.ViewModels;
 using Minimum.Views;
 

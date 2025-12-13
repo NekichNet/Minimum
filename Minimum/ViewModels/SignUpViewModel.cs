@@ -1,4 +1,5 @@
-﻿using ReactiveUI;
+﻿using Minimum.Services;
+using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,9 @@ namespace Minimum.ViewModels
 
         private async Task TrySignUp()
         {
-            // любой код для регистрации
+            var req = new ServerConnectionManager();
+            await req.StartConnection();
+            await req.SignUp(Input_Login, Input_Password);
         }
         private async Task GoToSignIn()
         {

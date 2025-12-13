@@ -1,10 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using server.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace server.Data
 {
@@ -12,6 +7,7 @@ namespace server.Data
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Chat> Chats { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
 
         public AppDbContext(DbContextOptions<AppDbContext> options) 

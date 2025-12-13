@@ -1,0 +1,29 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Minimum.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Minimum.SignInView" x:DataType="vm:SignInViewModel">
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+			<RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Margin="15" Spacing="10" VerticalAlignment="Center">
+			<TextBox Text="{Binding Input_Login}" Watermark="{Binding Text_LoginWatermark}"></TextBox>
+			<Grid>
+                <Grid.ColumnDefinitions>
+					<ColumnDefinition></ColumnDefinition>
+					<ColumnDefinition Width="auto"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <TextBox  PasswordChar="{Binding Text_PasswordChar}" RevealPassword="true"  Text="{Binding Input_Password}" Watermark="{Binding Text_PasswordWatermark}"></TextBox>
+				<Button IsVisible="False" Command="{Binding Click_RevealPassword}" VerticalAlignment="Stretch" Margin="5" Grid.Column="1"></Button>
+            </Grid>
+            <Button Command="{Binding Click_SignIn}" Content="{Binding Text_ButtonSignIn}" HorizontalAlignment="Center" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"></Button>
+        </StackPanel>
+        <Button Command="{Binding Click_GoToSignUp}" Background="Transparent" Margin="15" HorizontalAlignment="Right" VerticalAlignment="Bottom" Content="{Binding Text_ButtonSwitchToSignUp}"></Button>
+    </Grid>
+</UserControl>

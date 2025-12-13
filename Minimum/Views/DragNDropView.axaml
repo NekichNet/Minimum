@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Minimum.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="400"
+             x:Class="Minimum.DragNDropView" Background="Transparent" x:DataType="vm:DragNDropViewModel"
+             >
+    <Grid DragDrop.AllowDrop="True" DragDrop.DragEnter="Grid_DragEnter" DragDrop.DragLeave="Grid_DragLeave" DragDrop.Drop="Grid_Drop">
+		<Border Background="Blue" Opacity="180" CornerRadius="10">
+           
+        </Border>
+         <Grid>
+				
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="1">
+				
+                <TextBlock IsVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="ExtraLight" FontSize="70">+</TextBlock>
+                
+            </StackPanel>
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="60">
+				
+                
+                <TextBlock IsVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"></TextBlock>
+                <TextBlock HorizontalAlignment="Center" Text="{Binding Text_DragNDropClue}" VerticalAlignment="Center" FontSize="20"></TextBlock>
+            </StackPanel>
+             
+         </Grid>
+    </Grid>
+
+</UserControl>

@@ -13,7 +13,7 @@
 		<vm:MainViewModel />
 	</Design.DataContext>
 	<Grid>
-		<minimum:SignUpView></minimum:SignUpView>
+		<minimum:ChatListView></minimum:ChatListView>
 	</Grid>
 	
 </UserControl>

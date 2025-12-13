@@ -1,0 +1,20 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Minimum.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Minimum.ChatListView" x:DataType="vm:ChatListViewModel">
+  
+    <Grid>
+		<ListBox SelectedIndex="{Binding CurrentIndex}"  ItemsSource="{Binding Chats}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+			<ListBox.ItemTemplate>
+				<DataTemplate>
+					<Grid HorizontalAlignment="Stretch">
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </Grid>
+</UserControl>

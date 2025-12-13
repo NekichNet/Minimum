@@ -12,7 +12,7 @@ namespace Minimum.Services
 {
     public class ServerConnectionManager
     {
-        TcpClient client;
+        private TcpClient client;
         public IPEndPoint ServerEndPoint { get; set; }
 
         public ServerConnectionManager()
@@ -21,86 +21,65 @@ namespace Minimum.Services
             ServerEndPoint = new IPEndPoint(IPAddress.Any, 8080);
         }
 
-
         public async Task StartConnection()
         {
-            if (ServerEndPoint != null)
+            if (!client.Connected)
             {
                 await client.ConnectAsync("127.0.0.1", 8080);
             }
             else
             {
-                throw new Exception("TcpClient is NULL");
+                throw new Exception("TcpClient уже подключен");
             }
         }
-
-
 
         private async Task<Response> SendRequest(Request request)
         {
+            if (!client.Connected)
+            {
+                return new Response { Success = false, Message = "Нет подключения к серверу" };
+            }
+
             var serializedReq = JsonSerializer.Serialize(request);
-
             var stream = client.GetStream();
-            var messageBytes = Encoding.UTF8.GetBytes(serializedReq.ToString());
-            var lengthPrefix = BitConverter.GetBytes(messageBytes.Length);
+            var messageBytes = Encoding.UTF8.GetBytes(serializedReq + "\n");
 
-            await stream.WriteAsync(lengthPrefix, 0, lengthPrefix.Length);
-            await stream.WriteAsync(messageBytes, 0, messageBytes.Length);
-
-
-            byte[] lengthBuffer = new byte[4];
-            int bytesRead = 0;
-
-            while (bytesRead < 4)
+            try
             {
-                int result = await stream.ReadAsync(lengthBuffer, bytesRead, 4 - bytesRead);
-                if (result == 0)
-                {
-                    throw new IOException("Соединение закрыто удалённой стороной");
-                }
-
-                bytesRead += result;
+                await stream.WriteAsync(messageBytes, 0, messageBytes.Length);
+            }
+            catch (Exception ex)
+            {
+                return new Response { Success = false, Message = $"Ошибка отправки: {ex.Message}" };
             }
 
-            int messageLength = BitConverter.ToInt32(lengthBuffer, 0);
-
-            if (messageLength <= 0 || messageLength > 10 * 1024 * 1024)
+            var buffer = new byte[4096];
+            int bytesRead;
+            try
             {
-                throw new InvalidOperationException($"Некорректная длина сообщения: {messageLength}");
+                bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            }
+            catch (Exception ex)
+            {
+                return new Response { Success = false, Message = $"Ошибка чтения: {ex.Message}" };
             }
 
-            byte[] messageBuffer = new byte[messageLength];
-            bytesRead = 0;
+            string responseJson = Encoding.UTF8.GetString(buffer, 0, bytesRead).TrimEnd('\0', '\n', '\r');
 
-            while (bytesRead < messageLength)
+            if (string.IsNullOrWhiteSpace(responseJson))
             {
-                int result = await stream.ReadAsync(messageBuffer, bytesRead, messageLength - bytesRead);
-                if (result == 0)
-                {
-                    throw new IOException("Соединение закрыто во время чтения");
-                }
-
-                bytesRead += result;
+                return new Response { Success = false, Message = "Пустой ответ от сервера" };
             }
 
-            string message = Encoding.UTF8.GetString(messageBuffer);
-
-            //var bufferedReq = UTF8Encoding.UTF8.GetBytes(serializedReq);
-            //var buffer = new byte[1024];
-            //if (client.Connected)
-            //{
-            //    await client.Client.SendAsync(bufferedReq);
-            //    var responceText = await client.Client.ReceiveAsync(buffer);
-            //    var responce = JsonSerializer.Deserialize<Response>(responceText);
-            //    return responce;
-            //}
-
-            return new Response() { Success = false, Message="Нет соединения с сервером" };
+            try
+            {
+                return JsonSerializer.Deserialize<Response>(responseJson);
+            }
+            catch (JsonException ex)
+            {
+                return new Response { Success = false, Message = $"Не JSON: {ex.Message}" };
+            }
         }
-
-
-
-
 
         public async Task<Response> SignUp(string login, string password)
         {
@@ -112,6 +91,7 @@ namespace Minimum.Services
             };
             return await SendRequest(req);
         }
+
         public async Task<Response> SignIn(string login, string password)
         {
             var req = new Request()
@@ -120,9 +100,9 @@ namespace Minimum.Services
                 Username = login,
                 Password = password
             };
-
             return await SendRequest(req);
         }
+
         public async Task<Response> CreateChat(string chatName)
         {
             var req = new Request()
@@ -132,46 +112,59 @@ namespace Minimum.Services
             };
             return await SendRequest(req);
         }
+
         public async Task<Response> SendMessage(string message, int chatId)
         {
             var req = new Request()
             {
                 Type = "send_message",
+                MessageText = message,
                 ChatId = chatId
             };
             return await SendRequest(req);
         }
-        public async Task<Response> SendFilePlaceholder(string path)
-        {
-            var req = new Request()
-            {
-                Type = "send_file_placeholder"
-            };
-            return await SendRequest(req);
-        }
-        public async Task<Response> UploadFileChunk(string path)
-        {
-            var req = new Request()
-            {
-                Type = "upload_file_chunk"
-            };
-            return await SendRequest(req);
-        }
-        public async Task<Response> DownloadFile()
-        {
-            var req = new Request()
-            {
-                Type = "download_file"
-            };
-            return await SendRequest(req);
-        }
-        public async Task<Response> JoinChat(int ChatId)
-        {
 
+        public async Task<Response> SendFilePlaceholder(string fileName, long fileSize, string fileId, int chatId)
+        {
+            var req = new Request()
+            {
+                Type = "send_file_placeholder",
+                FileName = fileName,
+                FileSize = fileSize,
+                FileId = fileId,
+                ChatId = chatId
+            };
+            return await SendRequest(req);
+        }
+
+        public async Task<Response> UploadFileChunk(string fileId, byte[] fileData, bool isComplete)
+        {
+            var req = new Request()
+            {
+                Type = "upload_file_chunk",
+                FileId = fileId,
+                FileData = fileData,
+                IsUploadComplete = isComplete
+            };
+            return await SendRequest(req);
+        }
+
+        public async Task<Response> DownloadFile(string fileId)
+        {
+            var req = new Request()
+            {
+                Type = "download_file",
+                FileId = fileId
+            };
+            return await SendRequest(req); // фывфыв
+        }
+
+        public async Task<Response> JoinChat(int chatId)
+        {
             var req = new Request()
             {
                 Type = "join_chat",
-                ChatId = ChatId
+                ChatId = chatId
             };
             return await SendRequest(req);
         }

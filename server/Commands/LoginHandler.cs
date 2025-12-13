@@ -15,14 +15,23 @@ public class LoginHandler : CommandHandler
 
     public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
-        var user = await UserRepository.GetUserByNameAsync(request.Username);
-        if (user != null && user.Password == request.Password)
+        try
         {
-            string token = Guid.NewGuid().ToString();
-            UserTokens.TryAdd(token, user.Name);
-            return new Response { Success = true, Message = "Успешный вход.", Token = token };
+            var user = await UserRepository.GetUserByNameAsync(request.Username);
+            if (user != null && user.Password == request.Password)
+            {
+                string token = Guid.NewGuid().ToString();
+                UserTokens.TryAdd(token, user.Name);
+                return new Response { Success = true, Message = "Успешный вход.", Token = token };
+            }
+
+            return new Response { Success = false, Message = "Неверный логин или пароль." };
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
         }
 
-        return new Response { Success = false, Message = "Неверный логин или пароль." };
+        return new Response { Success = false, Message = "123" };
     }
 }

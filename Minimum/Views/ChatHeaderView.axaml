@@ -27,8 +27,9 @@
 			<Button Content="...">
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuItem Header="Покинуть чат" />
-                        <MenuItem Header="Удолтть чат" />
+                        <MenuItem Header="{Binding Text_ChangeChatBGButton}" />
+                        <MenuItem Header="{Binding Text_QuitChatButton}" />
+                        <MenuItem Header="{Binding Text_DeleteChatButton}" />
                         <!--
                         <Separator />
                         <MenuItem Header="Настройки">

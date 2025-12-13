@@ -17,6 +17,7 @@ namespace Minimum.ViewModels
 
         public string Text_DeleteChatButton { get; set; } = "Удалить чат";
         public string Text_QuitChatButton { get; set; } = "Покинуть чат";
+        public string Text_ChangeChatBGButton { get; set; } = "Изменить фон чата";
 
 
 

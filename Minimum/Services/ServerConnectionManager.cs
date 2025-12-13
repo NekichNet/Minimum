@@ -151,37 +151,29 @@ namespace Minimum.Services
             return await SendRequest(req);
         }
 
-        public async Task<Response> DownloadFile(string fileId)
+        public async Task<Response> DownloadFile(string fileId, string destinationPath, long expectedFileSize, string? token = null)
         {
             var req = new Request()
             {
                 Type = "download_file",
-                FileId = fileId
+                FileId = fileId,
+                Token = token ?? string.Empty
             };
-            return await SendRequest(req); // фывфыв
+            return await DownloadFile(req, destinationPath, expectedFileSize);
         }
 
-
-
-        public async Task<Response> DownloadFile(string fileId, string destinationPath, long expectedFileSize, string? token = null)
+        public async Task<Response> DownloadFile(Request request, string destinationPath, long expectedFileSize)
         {
             if (!client.Connected)
             {
                 return new Response { Success = false, Message = "Нет подключения к серверу" };
             }
-            if (expectedFileSize <= 0)
-            {
-                return await DownloadFile(fileId);
-            }
+            //if (expectedFileSize <= 0)
+            //{
+            //    return await DownloadFile(fileId);
+            //}
 
-            var req = new Request()
-            {
-                Type = "download_file",
-                FileId = fileId,
-                Token = token
-            };
-
-            var serializedReq = JsonSerializer.Serialize(req);
+            var serializedReq = JsonSerializer.Serialize(request);
             var stream = client.GetStream();
             var messageBytes = Encoding.UTF8.GetBytes(serializedReq + "\n");
 
@@ -255,7 +247,6 @@ namespace Minimum.Services
                 return new Response { Success = false, Message = "Ошибка загрузки файла: " + ex.Message };
             }
         }
-
 
         public async Task<Response> JoinChat(int chatId)
         {

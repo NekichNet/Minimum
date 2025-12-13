@@ -1,0 +1,48 @@
+<Styles xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<Style Selector="AccessText.Standart">
+		<Setter Property="FontFamily" Value="Gilroy"></Setter>
+	</Style>
+	<Style Selector="Window.Standart">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Window">
+					<Grid>
+						<Border BorderThickness="2" CornerRadius="7" Classes="Border.Window">
+							<ContentPresenter Margin="5"/>
+						</Border>
+					</Grid>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+	<Style Selector="Border.Active">
+		<Setter Property="CornerRadius" Value="7"></Setter>
+		<Setter Property="Margin" Value="2"></Setter>
+	</Style>
+	<Style Selector="Border.Active:pointerover">
+		<Setter Property="BorderThickness" Value="3"></Setter>
+	</Style>
+	<Style Selector="Border.Panel">
+		<Setter Property="BorderThickness" Value="2"></Setter>
+		<Setter Property="CornerRadius" Value="6"></Setter>
+	</Style>
+	<Style Selector="Button">
+		<Setter Property="Background" Value="Transparent"></Setter>
+		<Setter Property="BorderBrush" Value="Transparent"></Setter>
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="Button">
+					<Border Name="ButtonBorder" CornerRadius="5">
+						<ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"></ContentPresenter>
+						<Border.Styles>
+							<Style Selector="Border:pointerover">
+								<Setter Property="Background" Value="{Binding ElementName='ButtonBorder' Path=BorderBrush}"></Setter>
+							</Style>
+						</Border.Styles>
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+</Styles>

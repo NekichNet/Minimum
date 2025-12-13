@@ -69,5 +69,6 @@ internal class Program
                 Console.WriteLine($"ID чата: {response.ChatId}");
             }
         }
+
     }
 }

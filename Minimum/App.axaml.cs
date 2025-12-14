@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Minimum.Services;
 using Minimum.Views;
 
 namespace Minimum;
@@ -16,7 +17,9 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new SignInUpView();
+            var cacheService = new CacheService();
+
+            desktop.MainWindow = new SignInUpView(cacheService);
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {

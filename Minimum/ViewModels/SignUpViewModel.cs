@@ -41,7 +41,8 @@ namespace Minimum.ViewModels
 
         private async Task TrySignUp()
         {
-            var req = new ServerConnectionManager();
+            var cacheService = new CacheService();
+            var req = new ServerConnectionManager(cacheService);
             await req.StartConnection();
             var resp = await req.SignUp(Input_Login, Input_Password);
 

@@ -17,13 +17,17 @@ namespace Minimum.Services
         private TcpClient client;
         public IPEndPoint ServerEndPoint { get; set; }
 
+        private readonly CacheService _cacheService;
+
         public string? Token { get; private set; }
 
 
-        public ServerConnectionManager()
+        public ServerConnectionManager(CacheService cacheService)
         {
             client = new TcpClient();
             ServerEndPoint = new IPEndPoint(IPAddress.Any, 8080);
+
+            _cacheService = cacheService;
         }
 
 
@@ -143,7 +147,11 @@ namespace Minimum.Services
                 Type = "create_chat",
                 ChatName = chatName
             };
-            return await SendRequest(req);
+            var resp = await SendRequest(req);
+
+            await CacheChatIfNeeded(resp);
+
+            return resp;
         }
 
 
@@ -298,6 +306,16 @@ namespace Minimum.Services
                 Token = Token
             };
             return await SendRequest(req);
+        }
+
+
+
+        private async Task CacheChatIfNeeded(Response resp)
+        {
+            if (resp.Success && resp.Chat != null)
+            {
+                await _cacheService.SaveChatsAsync(new[] { resp.Chat });
+            }
         }
     }
 }

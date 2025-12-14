@@ -24,9 +24,21 @@ public class GetChatMessagesHandler : CommandHandler
             return new Response { Success = false, Message = "ID чата не указан." };
         }
 
-        var messages = await MessageRepository.GetLastMessagesAsync(request.ChatId.Value, request.Limit ?? 25);
+        int limit = request.Limit ?? 25;
+        int offset = request.Offset ?? 0;
 
-        var messageList = messages.Select(m => new { m.Text, m.Author.Name, m.Time, m.IsFile, m.FileName, m.IsUploaded }).ToList();
+        var messages = await MessageRepository.GetMessagesWithPaginationAsync(request.ChatId.Value, limit, offset);
+
+        var messageList = messages.Select(m => new
+        {
+            m.Id,
+            m.Text,
+            AuthorName = m.Author.Name,
+            m.Time,
+            m.IsFile,
+            m.FileName,
+            m.IsUploaded
+        }).ToList();
 
         return new Response
         {

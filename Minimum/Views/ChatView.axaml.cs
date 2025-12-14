@@ -13,10 +13,6 @@ public partial class ChatView : UserControl
     public ChatView(Chat chat)
     {
         InitializeComponent();
-<<<<<<< HEAD
-        DataContext = new ChatViewModel(chat, CacheService);
-=======
         DataContext = new ChatViewModel(chat, this);
->>>>>>> 523ba299d8f1d0dbc01aff45bef5c1d02e84c397
     }
 }

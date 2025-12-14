@@ -10,4 +10,5 @@ public interface IMessageRepository
     Task<Message?> GetMessageByFileIdAsync(string fileId);
     Task UpdateMessageAsync(Message message);
     Task<IEnumerable<Message>> GetLastMessagesAsync(int chatId, int limit);
+    Task<IEnumerable<Message>> GetMessagesWithPaginationAsync(int chatId, int limit, int offset);
 }

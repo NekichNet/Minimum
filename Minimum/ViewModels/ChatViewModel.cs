@@ -129,21 +129,15 @@ namespace Minimum.ViewModels
             new Message{Text = "Сообщени5", Author = new User(), Time = DateTime.Now}
         };
 
-<<<<<<< HEAD
         public ChatViewModel(Chat chat, CacheService cacheService)
         {
             Messages.AddRange(chat.Messages);
             Users.AddRange(chat.Users);
-            Id = chat.Id;
+            Id = chat.Id.ToString();
             Name = chat.Name;
             _cache = cacheService;
 
             _ = LoadCachedMessagesAsync(chat.Id);
-=======
-        public ChatViewModel()
-        {
-            
->>>>>>> 523ba299d8f1d0dbc01aff45bef5c1d02e84c397
         }
 
 

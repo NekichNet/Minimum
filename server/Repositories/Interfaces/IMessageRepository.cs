@@ -9,4 +9,5 @@ public interface IMessageRepository
     Task DeleteMessageAsync(int id);
     Task<Message?> GetMessageByFileIdAsync(string fileId);
     Task UpdateMessageAsync(Message message);
+    Task<IEnumerable<Message>> GetLastMessagesAsync(int chatId, int limit);
 }

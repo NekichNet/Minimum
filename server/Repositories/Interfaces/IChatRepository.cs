@@ -8,5 +8,7 @@ namespace Minimum.Repositories.Interfaces
         Task AddChatAsync(Chat chat);
         Task UpdateChatAsync(Chat chat);
         Task DeleteChatAsync(int id);
+
+        Task<IEnumerable<Chat>> GetUserChatsAsync(int userId);
     }
 }

@@ -1,0 +1,41 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Minimum.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Minimum.View.CreateChatView" x:DataType="vm:CreateChatViewModel">
+  <Grid>
+      
+	  <TabControl>
+		  <TabItem Header="{Binding Text_TabCreateChat}">
+              <Grid>
+			      <Grid.RowDefinitions>
+                      <RowDefinition Height="auto"></RowDefinition>
+                      <RowDefinition></RowDefinition>
+                  </Grid.RowDefinitions>
+                  <TextBlock Margin="5" Text="{Binding Text_CreateChatTitle}"></TextBlock>
+                  <StackPanel Margin="5" Grid.Row="1">
+                      <TextBlock Text="{Binding Text_CreateChatChatName}"></TextBlock>
+                      <TextBox Text="{Binding Input_CreateChatChatName}"></TextBox>
+		              <Button Content="{Binding Text_CreateChat}" Command="{Binding Click_CreateChat}"></Button>
+                  </StackPanel>
+              </Grid>
+          </TabItem>
+		  <TabItem Header="{Binding Text_TabJoinChat}">
+              <Grid>
+			      <Grid.RowDefinitions>
+                      <RowDefinition Height="auto"></RowDefinition>
+                      <RowDefinition></RowDefinition>
+                  </Grid.RowDefinitions>
+                  <TextBlock Margin="5" Text="{Binding Text_JoinChatTitle}"></TextBlock>
+                  <StackPanel Margin="5" Grid.Row="1">
+                      <TextBlock Text="{Binding Text_JoinChatChatName}"></TextBlock>
+                      <TextBox Text="{Binding Input_JoinChatChatName}"></TextBox>
+		              <Button Content="{Binding Text_JoinChat}" Command="{Binding Click_CreateChat}"></Button>
+                  </StackPanel>
+              </Grid>
+          </TabItem>
+      </TabControl>
+  </Grid>
+</UserControl>

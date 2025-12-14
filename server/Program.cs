@@ -13,9 +13,11 @@ namespace server;
 
 internal class Program
 {
+    private const int _port = 31584;
+
     static async Task Main(string[] args)
     {
-        Env.Load("../../../");
+        Env.Load(".env");
 
         var connectionString = Env.GetString("DB_CONNECTION_STRING")
             ?? throw new InvalidOperationException("Connection string not configured.");
@@ -36,11 +38,17 @@ internal class Program
                 var userRepository = provider.GetRequiredService<IUserRepository>();
                 var chatRepository = provider.GetRequiredService<IChatRepository>();
                 var messageRepository = provider.GetRequiredService<IMessageRepository>();
-                return new TcpChatService(8080, userRepository, chatRepository, messageRepository);
+                return new TcpChatService(_port, userRepository, chatRepository, messageRepository);
             });
         });
 
         var host = builder.Build();
+
+        using (var scope = host.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            context.Database.Migrate();
+        }
 
         // вот тут сервер запускается
         var server = host.Services.GetRequiredService<TcpChatService>();
@@ -82,23 +90,5 @@ internal class Program
                 Console.WriteLine($"ID чата: {response.ChatId}");
             }
         }
-
-        //ConsoleUI Page1UI = new ConsoleUI(
-        //    "Вспомогательная страница",
-        //    new List<MenuOption>
-        //    {
-        //        new MenuOption{Name = "Вау! Кнопка!", CurrentOptionType = OptionType.BUTTON_RETURN}
-        //    }
-        //    );
-
-
-        //ConsoleUI MainUI = new ConsoleUI(
-        //    "Главная страница",
-        //    new List<MenuOption>
-        //    {
-        //        new MenuOption{Name = "Открыть вспомогательное меню", Action = Page1UI.Start}
-        //    }
-        //    );
-        //_ = MainUI.Start();
     }
 }

@@ -2,6 +2,7 @@
 using Minimum.Repositories.Interfaces;
 using server.Data;
 using server.Models;
+using System.Xml.Linq;
 
 namespace server.Repositories;
 
@@ -49,5 +50,28 @@ public class UserRepository : IUserRepository
     public async Task<IEnumerable<User>> GetAllUsers()
     {
         return await _db.Users.ToListAsync();
+    }
+
+    public async Task AddTokenAsync(AuthToken token)
+    {
+        await _db.AuthTokens.AddAsync(token);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task<AuthToken?> GetTokenByValueAsync(string token)
+    {
+        return await _db.AuthTokens
+            .Include(at => at.User)
+            .FirstOrDefaultAsync(at => at.Token == token);
+    }
+
+    public async Task DeleteTokenAsync(string token)
+    {
+        var tokenEntity = await _db.AuthTokens.FirstOrDefaultAsync(at => at.Token == token);
+        if (tokenEntity != null)
+        {
+            _db.AuthTokens.Remove(tokenEntity);
+            await _db.SaveChangesAsync();
+        }
     }
 }

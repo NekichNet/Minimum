@@ -1,0 +1,82 @@
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
+using Minimum.ViewModels;
+using Minimum.Views;
+using System;
+using System.Threading.Tasks;
+
+namespace Minimum;
+
+public partial class SignInUpView : Window
+{
+    public SignInUpView()
+    {
+        InitializeComponent();
+        ShowSignInView();
+    }
+
+    private void InitializeComponent()
+    {
+        AvaloniaXamlLoader.Load(this);
+    }
+
+    // Показать экран входа
+    public void ShowSignInView()
+    {
+        var view = new SignInView(this);
+        GetContentHost().Content = view;
+    }
+
+    // Показать экран регистрации
+    public void ShowSignUpView()
+    {
+        var view = new SignUpView(this);
+        GetContentHost().Content = view;
+    }
+
+    public async Task LoadInitialViewAsync(Func<Task<bool>> needSignUpProvider)
+    {
+        if (needSignUpProvider == null) throw new ArgumentNullException(nameof(needSignUpProvider));
+        bool needSignUp = await needSignUpProvider();
+        if (needSignUp) ShowSignUpView(); else ShowSignInView();
+    }
+
+    private ContentControl GetContentHost()
+    {
+        return this.FindControl<ContentControl>("ContentHost")
+            ?? throw new InvalidOperationException("ContentHost не найден в разметке");
+    }
+
+
+    private void SubscribeAuth(UserControl view)
+    {
+        if (view.DataContext is SignInViewModel signInVm)
+        {
+            signInVm.Authenticated += token => OnAuthenticated(token);
+        }
+        else if (view.DataContext is SignUpViewModel signUpVm)
+        {
+            signUpVm.Authenticated += token => OnAuthenticated(token);
+        }
+    }
+
+
+    private void OnAuthenticated(string token)
+    {
+        // Здесь можно сохранить token
+
+        Dispatcher.UIThread.Post(async () =>
+        {
+            var mainWindow = new MainWindow
+            {
+                DataContext = new MainViewModel(new MainWindow())
+            };
+
+            mainWindow.Show();
+            await Task.Delay(1); 
+            this.Close();
+        });
+    }
+}

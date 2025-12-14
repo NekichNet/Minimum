@@ -1,11 +1,19 @@
-﻿using Avalonia;
+﻿using Avalonia.Controls;
+using Avalonia;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform.Storage;
+using Microsoft.Extensions.DependencyInjection;
+using Minimum.Services;
+using Minimum.Views;
+using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using Minimum.View;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
@@ -16,7 +24,7 @@ using Color = Avalonia.Media.Color;
 
 namespace Minimum.ViewModels
 {
-    public class SettingsViewModel
+    public class SettingsViewModel : ViewModelBase
     {
         private SettingsView _settingsView;
         private Avalonia.Styling.ThemeVariant _theme;
@@ -69,5 +77,85 @@ namespace Minimum.ViewModels
             UpdateAccent = ReactiveCommand.Create(UpdateAccentColor);
             UpdateAccentColor();
         }
+        [Reactive] public Bitmap? Avatar { get; set; }
+
+
+
+        public ReactiveCommand<Unit, Unit> Click_UploadPFP { get; set; }
+        public ReactiveCommand<Unit, Unit> Click_LogOff { get; set; }
+
+        public SettingsViewModel()
+        {
+            Click_UploadPFP = ReactiveCommand.CreateFromTask(UploadPFP);
+            Click_LogOff = ReactiveCommand.CreateFromTask(LogOff);
+
+        }
+
+
+
+        public async Task LogOff()
+        {
+            // Код для того, чтобы выйти из аккаунта и удалить токен усера
+        }
+
+
+
+
+
+
+        public async Task UploadPFP()
+        {
+
+
+
+            try
+            {
+
+
+                var topLevel = TopLevel.GetTopLevel(new MainWindow());
+
+
+                var image = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    Title = "Выберите изображение",
+                    AllowMultiple = false,
+                    FileTypeFilter = new[]
+                        {
+                        new FilePickerFileType("Изображение")
+                        {
+                            Patterns = new[] { "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.webp" },
+                            MimeTypes = new[] { "image/*" }
+                        }
+                    }
+                });
+                string imagePath = (image[0].TryGetLocalPath());
+
+                SetPFP(imagePath);
+
+
+            }
+            catch { }
+
+
+
+        }
+        private void SetPFP(string imagePath)
+        {
+            try
+            {
+                using var stream = File.OpenRead(imagePath);
+                Avatar = Bitmap.DecodeToHeight(stream, 800, BitmapInterpolationMode.HighQuality);
+
+
+
+                App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser.Avatar = Avatar;
+                App.ServiceProvider.GetRequiredService<ServerConnectionManager>().UpdateUser(App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser);
+            }
+            catch (Exception ex)
+            {
+                Avatar = null;
+            }
+        }
+
     }
 }

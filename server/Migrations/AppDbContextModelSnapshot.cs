@@ -22,6 +22,49 @@ namespace server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("ChatUser", b =>
+                {
+                    b.Property<int>("ChatsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UsersId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ChatsId", "UsersId");
+
+                    b.HasIndex("UsersId");
+
+                    b.ToTable("UserChats", (string)null);
+                });
+
+            modelBuilder.Entity("server.Models.AuthToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AuthTokens");
+                });
+
             modelBuilder.Entity("server.Models.Chat", b =>
                 {
                     b.Property<int>("Id")
@@ -53,6 +96,23 @@ namespace server.Migrations
                     b.Property<int>("ChatId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("FileId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsFile")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsUploaded")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("text");
@@ -77,8 +137,9 @@ namespace server.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("ChatId")
-                        .HasColumnType("integer");
+                    b.Property<string>("AvatarPath")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -90,9 +151,33 @@ namespace server.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChatId");
-
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("ChatUser", b =>
+                {
+                    b.HasOne("server.Models.Chat", null)
+                        .WithMany()
+                        .HasForeignKey("ChatsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("server.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UsersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("server.Models.AuthToken", b =>
+                {
+                    b.HasOne("server.Models.User", "User")
+                        .WithMany("AuthTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("server.Models.Message", b =>
@@ -100,7 +185,7 @@ namespace server.Migrations
                     b.HasOne("server.Models.User", "Author")
                         .WithMany("Messages")
                         .HasForeignKey("AuthorId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("server.Models.Chat", "Chat")
@@ -114,22 +199,15 @@ namespace server.Migrations
                     b.Navigation("Chat");
                 });
 
-            modelBuilder.Entity("server.Models.User", b =>
-                {
-                    b.HasOne("server.Models.Chat", null)
-                        .WithMany("Users")
-                        .HasForeignKey("ChatId");
-                });
-
             modelBuilder.Entity("server.Models.Chat", b =>
                 {
                     b.Navigation("Messages");
-
-                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("server.Models.User", b =>
                 {
+                    b.Navigation("AuthTokens");
+
                     b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618

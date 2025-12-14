@@ -10,8 +10,7 @@ public class CreateChatHandler : CommandHandler
     public CreateChatHandler(
         IUserRepository userRepository,
         IChatRepository chatRepository,
-        IMessageRepository messageRepository,
-        ConcurrentDictionary<string, string> tokens) : base(userRepository, chatRepository, messageRepository, tokens) { }
+        IMessageRepository messageRepository) : base(userRepository, chatRepository, messageRepository) { }
 
     public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {

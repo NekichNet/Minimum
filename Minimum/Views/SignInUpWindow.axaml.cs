@@ -101,7 +101,9 @@ public partial class SignInUpView : Window
         var cachedChats = await _cacheService.LoadChatsAsync();
         foreach (var chat in cachedChats)
         {
+            /*
             Chats.Add(new ChatViewModel(chat, _cacheService));
+            */
         }
     }
 }

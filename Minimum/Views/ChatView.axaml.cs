@@ -15,9 +15,8 @@ public partial class ChatView : UserControl
     public ChatView(Chat chat)
     {
         _scm = new ServerConnectionManager(_cache);
-        var chatVm = new ChatViewModel(chat, _cache);
 
         InitializeComponent();
-        DataContext = chatVm;
+        DataContext = new ChatViewModel(chat, _cache, this);
     }
 }

@@ -37,7 +37,7 @@ namespace Minimum.ViewModels
         private const int KeepLastMessages = 50;
         private readonly ServerConnectionManager _scm;
 
-        public ChatViewModel(Chat chat, ChatView parent, ServerConnectionManager scm)
+        public ChatViewModel(Chat chat, CacheService cacheService, ChatView parent)
         {
             ChatData = chat;
             Messages.AddRange(chat.Messages);
@@ -55,10 +55,18 @@ namespace Minimum.ViewModels
             chatHeaderModel.ChatData = chat;
             chatHeader.DataContext = chatHeaderModel;
 
+            Messages.AddRange(chat.Messages);
+            Users.AddRange(chat.Users);
+            Id = chat.Id;
+            Name = chat.Name;
+            _cache = cacheService;
+
+            _ = LoadCachedMessagesAsync(chat.Id);
 
             (parent as ChatView).ChatHeaderContainer.Child = chatHeader;
-        }
 
+        }
+        
 
         public async Task SendMessage()
         {
@@ -145,16 +153,7 @@ namespace Minimum.ViewModels
         public ObservableCollection<Chat> Chats { get; } = new ObservableCollection<Chat>();
         public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>() { };
 
-        public ChatViewModel(Chat chat, CacheService cacheService)
-        {
-            Messages.AddRange(chat.Messages);
-            Users.AddRange(chat.Users);
-            Id = chat.Id;
-            Name = chat.Name;
-            _cache = cacheService;
-
-            _ = LoadCachedMessagesAsync(chat.Id);
-        }
+        
 
 
 

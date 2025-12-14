@@ -1,4 +1,5 @@
-﻿using Minimum.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Minimum.Services;
 using Minimum.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -31,6 +32,7 @@ namespace Minimum.ViewModels
 
         public SignInViewModel(SignInUpView signInUpView)
         {
+            CheckToken();
             _signInUpView = signInUpView;
             Bool_RevealPassword = false;
             Text_PasswordChar = '•';
@@ -62,7 +64,6 @@ namespace Minimum.ViewModels
         {
             var nav = new NavigationService();
             _signInUpView.ShowSignUpView();
-            //nav.NavigateTo<SignUpView>();
             await Task.CompletedTask;
         }
 
@@ -81,12 +82,7 @@ namespace Minimum.ViewModels
                     {
                         Authenticated?.Invoke(resp.Token);
 
-                        var win = new MainWindow();
-                        win.Show();
-
-                        _signInUpView.Close();
-                        //var nav = new NavigationService();
-                        //nav.NavigateTo<ChatView>();
+                        await AutoLogin();
                     }
                 }
                 else
@@ -98,6 +94,26 @@ namespace Minimum.ViewModels
             {
                 // логика обработки ошибок
             }
+        }
+
+        private async Task CheckToken()
+        {
+            string token = "123";
+            var con = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
+            var res = await con.CheckToken(token);
+
+            if (res.Success == true)
+            {
+                await AutoLogin();
+            }
+        }
+
+        private async Task AutoLogin()
+        {
+            var win = new MainWindow();
+            win.Show();
+
+            _signInUpView.Close();
         }
     }
 }

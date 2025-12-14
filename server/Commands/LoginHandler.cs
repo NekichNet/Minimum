@@ -11,7 +11,7 @@ public class LoginHandler : CommandHandler
         IUserRepository userRepository,
         IChatRepository chatRepository,
         IMessageRepository messageRepository) : base(userRepository, chatRepository, messageRepository) { }
-
+    
     public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
         var user = await UserRepository.GetUserByNameAsync(request.Username);
@@ -24,7 +24,7 @@ public class LoginHandler : CommandHandler
                 Token = token,
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow,
-                ExpiresAt = null
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
             };
 
             await UserRepository.AddTokenAsync(authToken);

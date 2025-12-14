@@ -72,6 +72,7 @@ namespace Minimum.ViewModels
                     Text = Input_Message,
                     Time = DateTime.Now
                 });
+                await SaveMessagesToCacheAsync(ChatData.Id);
             }
         }
 
@@ -142,9 +143,7 @@ namespace Minimum.ViewModels
         public string Name { get; set; }
         public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
         public ObservableCollection<Chat> Chats { get; } = new ObservableCollection<Chat>();
-        public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>()
-        {
-        };
+        public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>() { };
 
         public ChatViewModel(Chat chat, CacheService cacheService)
         {
@@ -157,9 +156,13 @@ namespace Minimum.ViewModels
             _ = LoadCachedMessagesAsync(chat.Id);
         }
 
-        
 
-        public void AddMessage(Message msg) => Messages.Add(msg);
+
+        public void AddMessage(Message msg)
+        {
+            Messages.Add(msg);
+            _ = SaveMessagesToCacheAsync(Id);
+        }
 
 
 
@@ -167,9 +170,11 @@ namespace Minimum.ViewModels
         {
             var chats = await _cache.LoadChatsAsync();
             Chats.Clear();
+            await SaveChatsToCacheAsync();
             foreach (var c in chats.OrderByDescending(ch => ch.Id))
             {
                 Chats.Add(c);
+                await SaveChatsToCacheAsync();
             }
         }
 
@@ -254,6 +259,7 @@ namespace Minimum.ViewModels
                 }
 
                 msg.IsUploaded = true;
+                await SaveMessagesToCacheAsync(Id);
             }
         }
 

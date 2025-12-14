@@ -42,7 +42,6 @@ namespace Minimum.ViewModels
             }
         }
 
-        private ObservableCollection<ChatChooserOption> _chats;
         public ObservableCollection<ChatChooserOption> Chats { get; set; }
 
         public ChatListViewModel(ObservableCollection<ChatChooserOption> chats)

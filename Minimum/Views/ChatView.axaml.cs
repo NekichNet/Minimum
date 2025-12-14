@@ -12,6 +12,7 @@ public partial class ChatView : UserControl
 {
     private readonly CacheService _cache = new CacheService();
     private readonly ServerConnectionManager _scm;
+
     public ChatView(Chat chat)
     {
         _scm = new ServerConnectionManager(_cache);

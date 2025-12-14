@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using Minimum.Services;
 using Minimum.Views;
+using Color = Avalonia.Media.Color;
 using System;
 
 namespace Minimum;

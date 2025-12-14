@@ -1,4 +1,4 @@
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml.MarkupExtensions;
@@ -12,11 +12,14 @@ using Minimum.View;
 using Minimum.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
+using Minimum.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.IO;
+using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Reactive;
 using System.Text;
@@ -43,7 +46,7 @@ namespace Minimum.ViewModels
         public ReactiveCommand<Unit, Unit> QuitCommand { get; private set; }
 
         public string Username { get; set; } = string.Empty;
-        [Reactive] public Bitmap? Avatar { get; set; }
+
 
 
         public ReactiveCommand<Unit, Unit> Click_UploadPFP { get; set; }
@@ -60,6 +63,7 @@ namespace Minimum.ViewModels
 
             LogOff();
         }
+        [Reactive] public Bitmap? Avatar { get; set; }
 
 
         public async Task LogOff()

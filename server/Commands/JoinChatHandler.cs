@@ -38,6 +38,7 @@ public class JoinChatHandler : CommandHandler
 
         chat.Users.Add(user);
         await ChatRepository.UpdateChatAsync(chat);
+        await UserRepository.UpdateUserAsync(user);
 
         return new Response { Success = true, Message = chat.Name, ChatId = chat.Id };
     }

@@ -42,6 +42,7 @@ public class TcpChatService
             ["validate_token"] = (req, s, c) => new ValidateTokenHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["get_user_chats"] = (req, s, c) => new GetUserChatsHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["get_chat_messages"] = (req, s, c) => new GetChatMessagesHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
+            ["leave_chat"] = (req, s, c) => new LeaveChatHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
         };
     }
 

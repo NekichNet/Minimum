@@ -13,9 +13,10 @@ namespace Minimum.Models
     {
         public string Name { get; set; }
         public UserControl AssignedUserControl { get; set; }
-        public ChatChooserOption(string name)
+        public ChatChooserOption(View.SettingsView settingsView)
         {
-            Name = name;
+            Name = "Настройки";
+            AssignedUserControl = settingsView;
         }
         public ChatChooserOption(ChatView chatView)
         {

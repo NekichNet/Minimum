@@ -58,8 +58,8 @@ namespace Minimum.ViewModels
 
         private async Task GoToSignUp()
         {
-            //var nav = new NavigationService();
-            //nav.NavigateTo<SignUpView>();
+            var nav = new NavigationService();
+            nav.NavigateTo<SignUpView>();
             await Task.CompletedTask;
         }
 

@@ -14,7 +14,6 @@ public class MessageRepository : IMessageRepository
         _db = db;
     }
 
-
     public async Task AddMessageAsync(Message message)
     {
         await _db.Messages.AddAsync(message);

@@ -14,6 +14,14 @@ public partial class SignInUpView : Window
     public SignInUpView()
     {
         InitializeComponent();
+        if (true)
+        {
+            ShowSignUpView();
+        }
+        else
+        {
+            ShowSignInView();
+        }
     }
 
 
@@ -83,7 +91,7 @@ public partial class SignInUpView : Window
         {
             var mainWindow = new MainWindow
             {
-                DataContext = new MainViewModel()
+                DataContext = new MainViewModel(new MainWindow())
             };
 
             mainWindow.Show();

@@ -17,11 +17,16 @@ namespace Minimum.Services
         private TcpClient client;
         public IPEndPoint ServerEndPoint { get; set; }
 
+        public string? Token { get; private set; }
+
+
         public ServerConnectionManager()
         {
             client = new TcpClient();
             ServerEndPoint = new IPEndPoint(IPAddress.Any, 8080);
         }
+
+
 
         public async Task StartConnection()
         {
@@ -35,11 +40,18 @@ namespace Minimum.Services
             }
         }
 
+
         private async Task<Response> SendRequest(Request request)
         {
             if (!client.Connected)
             {
                 return new Response { Success = false, Message = "Нет подключения к серверу" };
+            }
+
+
+            if (string.IsNullOrWhiteSpace(request.Token) && !string.IsNullOrWhiteSpace(Token))
+            {
+                request.Token = Token;
             }
 
             var serializedReq = JsonSerializer.Serialize(request);
@@ -83,6 +95,7 @@ namespace Minimum.Services
             }
         }
 
+
         public async Task<Response> SignUp(string login, string password)
         {
             var req = new Request()
@@ -91,8 +104,17 @@ namespace Minimum.Services
                 Username = login,
                 Password = password,
             };
-            return await SendRequest(req);
+
+            var resp = await SendRequest(req);
+
+            if (resp != null && resp.Success && !string.IsNullOrWhiteSpace(resp.Token))
+            {
+                Token = resp.Token;
+            }
+
+            return resp;
         }
+
 
         public async Task<Response> SignIn(string login, string password)
         {
@@ -102,8 +124,17 @@ namespace Minimum.Services
                 Username = login,
                 Password = password
             };
-            return await SendRequest(req);
+
+            var resp = await SendRequest(req);
+
+            if (resp != null && resp.Success && !string.IsNullOrWhiteSpace(resp.Token))
+            {
+                Token = resp.Token;
+            }
+
+            return resp;
         }
+
 
         public async Task<Response> CreateChat(string chatName)
         {
@@ -115,16 +146,19 @@ namespace Minimum.Services
             return await SendRequest(req);
         }
 
+
         public async Task<Response> SendMessage(string message, int chatId)
         {
             var req = new Request()
             {
                 Type = "send_message",
                 MessageText = message,
-                ChatId = chatId
+                ChatId = chatId,
+                Token = Token
             };
             return await SendRequest(req);
         }
+
 
         public async Task<Response> SendFilePlaceholder(string fileName, long fileSize, string fileId, int chatId)
         {
@@ -134,10 +168,12 @@ namespace Minimum.Services
                 FileName = fileName,
                 FileSize = fileSize,
                 FileId = fileId,
-                ChatId = chatId
+                ChatId = chatId,
+                Token = Token
             };
             return await SendRequest(req);
         }
+
 
         public async Task<Response> UploadFileChunk(string fileId, byte[] fileData, bool isComplete)
         {
@@ -146,10 +182,12 @@ namespace Minimum.Services
                 Type = "upload_file_chunk",
                 FileId = fileId,
                 FileData = fileData,
-                IsUploadComplete = isComplete
+                IsUploadComplete = isComplete,
+                Token = Token
             };
             return await SendRequest(req);
         }
+
 
         public async Task<Response> DownloadFile(string fileId, string destinationPath, long expectedFileSize, string? token = null)
         {
@@ -162,16 +200,18 @@ namespace Minimum.Services
             return await DownloadFile(req, destinationPath, expectedFileSize);
         }
 
+
         public async Task<Response> DownloadFile(Request request, string destinationPath, long expectedFileSize)
         {
             if (!client.Connected)
             {
                 return new Response { Success = false, Message = "Нет подключения к серверу" };
             }
-            //if (expectedFileSize <= 0)
-            //{
-            //    return await DownloadFile(fileId);
-            //}
+
+            if (string.IsNullOrWhiteSpace(request.Token) && !string.IsNullOrWhiteSpace(Token))
+            {
+                request.Token = Token;
+            }
 
             var serializedReq = JsonSerializer.Serialize(request);
             var stream = client.GetStream();
@@ -248,12 +288,14 @@ namespace Minimum.Services
             }
         }
 
+
         public async Task<Response> JoinChat(int chatId)
         {
             var req = new Request()
             {
                 Type = "join_chat",
-                ChatId = chatId
+                ChatId = chatId,
+                Token = Token
             };
             return await SendRequest(req);
         }

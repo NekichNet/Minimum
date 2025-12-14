@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="using:Minimum.Views"
         mc:Ignorable="d"
-        Width="500" MinWidth="500"
-        Height="600" MinHeight="500"
+        Width="700" MinWidth="600"
+        Height="700" MinHeight="500"
         x:Class="Minimum.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="Minimum">
     <Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition MinWidth="80"></ColumnDefinition>
+			<ColumnDefinition MinWidth="80" Width="150"></ColumnDefinition>
             <ColumnDefinition Width="auto"></ColumnDefinition>
             <ColumnDefinition MinWidth="300"></ColumnDefinition>
         </Grid.ColumnDefinitions>

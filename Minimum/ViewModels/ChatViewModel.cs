@@ -26,12 +26,15 @@ namespace Minimum.ViewModels
         public ChatHeaderViewModel Assigned_ChatHeaderViewModel { get; set; }
 
         public ReactiveCommand<Unit, Unit> Click_AttachFile { get; set; }
+        private CacheService _cache;
+        private const int KeepLastMessages = 50;
 
         public ChatViewModel()
         {
             Assigned_ChatHeaderViewModel = new ChatHeaderViewModel();
             Assigned_ChatHeaderViewModel.SetPictureDelegateHolder = SetBackgroundPicture;
             Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFile);
+            _cache = new CacheService();
         }
 
         public async Task AttachFile()
@@ -124,10 +127,7 @@ namespace Minimum.ViewModels
         }
 
 
-        public ChatViewModel()
-        {
-            _cache = new CacheService();
-        }
+        
 
         public void AddMessage(Message msg) => Messages.Add(msg);
 

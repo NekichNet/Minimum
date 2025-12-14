@@ -63,7 +63,12 @@ namespace Minimum.ViewModels
 
             _ = LoadCachedMessagesAsync(chat.Id);
 
+
+            
+
             (parent as ChatView).ChatHeaderContainer.Child = chatHeader;
+
+            App.ServiceProvider.GetRequiredService<ServerConnectionManager>().StartListeningAsync(this);
 
         }
         

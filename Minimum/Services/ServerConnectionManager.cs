@@ -325,5 +325,16 @@ namespace Minimum.Services
             };
             return await SendRequest(req);
         }
+
+        public async Task<Response> CheckToken(string token)
+        {
+            var req = new Request()
+            {
+                Type = "validate_token",
+                Token = token
+            };
+
+            return await SendRequest(req);
+        }
     }
 }

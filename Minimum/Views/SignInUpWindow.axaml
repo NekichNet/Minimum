@@ -5,6 +5,8 @@
         xmlns:views="using:Minimum.Views"
         mc:Ignorable="d"
         d:DesignWidth="800" d:DesignHeight="450"
+        Width="500" MinWidth="500"
+        Height="600" MinHeight="500"
         x:Class="Minimum.SignInUpView">
     
   <Grid Margin="12">

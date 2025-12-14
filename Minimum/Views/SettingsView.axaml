@@ -11,19 +11,21 @@
     </UserControl.Styles>
     
     <Grid Margin="20">
-        <StackPanel Spacing="10">
-            <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Left"/>
-            <TextBlock Text="{Binding AvatarTag}" HorizontalAlignment="Left"/>
-            <Image Source="{Binding Avatar}" Width="100" Height="100" HorizontalAlignment="Left"/>
-            <Button Content="{Binding LoadAvatarTag}" Width="150" HorizontalAlignment="Left"/>
-            <TextBlock Text="{Binding UsernameTag}"  HorizontalAlignment="Left"/>
-            <TextBox Text="{Binding Username}" Width="200" HorizontalAlignment="Left"/>
-            <Button Content="{Binding QuitTag}" Width="150" HorizontalAlignment="Left"></Button>
-            <TextBlock Text="{Binding ColorTag}" HorizontalAlignment="Left"></TextBlock>
-            <cp:ColorPicker x:Name="AccentPicker" Color="LightBlue" Width="250" Height="250" HorizontalAlignment="Left"></cp:ColorPicker>
-            <Button Content="{Binding UpdateColorTag}" Command="{Binding UpdateAccent}" Width="150" HorizontalAlignment="Left"></Button>
-            <TextBlock Text="{Binding ThemeTag}" HorizontalAlignment="Left"></TextBlock>
-            <ComboBox SelectedItem="{Binding Theme}" ItemsSource="{Binding Themes}" Width="150" HorizontalAlignment="Left"></ComboBox>
-        </StackPanel>
+        <ScrollViewer>
+			<StackPanel Spacing="10">
+                <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Left"/>
+                <TextBlock Text="{Binding AvatarTag}" HorizontalAlignment="Left"/>
+                <Image Source="{Binding Avatar}" Width="100" Height="100" HorizontalAlignment="Left"/>
+                <Button Content="{Binding LoadAvatarTag}" Width="150" HorizontalAlignment="Left"/>
+                <TextBlock Text="{Binding UsernameTag}"  HorizontalAlignment="Left"/>
+                <TextBox Text="{Binding Username}" Width="200" HorizontalAlignment="Left"/>
+                <Button Content="{Binding QuitTag}" Width="150" HorizontalAlignment="Left"></Button>
+                <TextBlock Text="{Binding ThemeTag}" HorizontalAlignment="Left"></TextBlock>
+                <ComboBox SelectedItem="{Binding Theme}" ItemsSource="{Binding Themes}" Width="150" HorizontalAlignment="Left"></ComboBox>
+                <TextBlock Text="{Binding ColorTag}" HorizontalAlignment="Left"></TextBlock>
+                <Button Content="{Binding UpdateColorTag}" Command="{Binding UpdateAccent}" Width="150" HorizontalAlignment="Left"></Button>
+                <cp:ColorPicker x:Name="AccentPicker" Color="LightBlue" Width="250" HorizontalAlignment="Left"></cp:ColorPicker>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

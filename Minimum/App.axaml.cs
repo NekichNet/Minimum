@@ -4,6 +4,8 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Minimum.ViewModels;
 using Minimum.Views;
+using Color = Avalonia.Media.Color;
+using System;
 
 namespace Minimum;
 

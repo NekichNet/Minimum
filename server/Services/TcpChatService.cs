@@ -23,7 +23,8 @@ public class TcpChatService
         int port,
         IUserRepository userRepository,
         IChatRepository chatRepository,
-        IMessageRepository messageRepository)
+        IMessageRepository messageRepository,
+        ChatConnectionService chatConnectionService)
     {
         _userRepository = userRepository;
         _chatRepository = chatRepository;

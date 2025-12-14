@@ -1,7 +1,7 @@
 ﻿using Minimum.Repositories.Interfaces;
 using Newtonsoft.Json;
 using server.Models;
-using System.Collections.Concurrent;
+using server.Services;
 using System.Net.Sockets;
 using System.Text;
 
@@ -10,14 +10,17 @@ namespace server.Commands;
 public class SendMessageHandler : CommandHandler
 {
     private readonly string _uploadDir;
+    private readonly ChatConnectionService _chatConnectionService;
 
     public SendMessageHandler(
         IUserRepository userRepository,
         IChatRepository chatRepository,
         IMessageRepository messageRepository,
-        string uploadDir) : base(userRepository, chatRepository, messageRepository)
+        string uploadDir,
+        ChatConnectionService chatConnectionService) : base(userRepository, chatRepository, messageRepository)
     {
         _uploadDir = uploadDir;
+        _chatConnectionService = chatConnectionService;
     }
 
     public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
@@ -42,12 +45,13 @@ public class SendMessageHandler : CommandHandler
         var message = new Message(request.MessageText, user.Id, chat.Id, user, chat);
         await MessageRepository.AddMessageAsync(message);
 
-        BroadcastMessageToChat(chat, message, user);
+        // Рассылаем сообщение всем подключенным клиентам в чате
+        BroadcastMessageToChat(chat.Id, message, user);
 
         return new Response { Success = true, Message = "Сообщение отправлено." };
     }
 
-    private void BroadcastMessageToChat(Chat chat, Message message, User author)
+    private void BroadcastMessageToChat(int chatId, Message message, User author)
     {
         var broadcastMsg = new
         {
@@ -65,7 +69,9 @@ public class SendMessageHandler : CommandHandler
         string json = JsonConvert.SerializeObject(broadcastMsg) + "\n";
         byte[] bytes = Encoding.UTF8.GetBytes(json);
 
-        foreach (var chatClient in chat.ConnectedClients.ToList())
+        var clients = _chatConnectionService.GetClients(chatId);
+
+        foreach (var chatClient in clients.ToList())
         {
             if (!chatClient.Connected) continue;
 
@@ -76,7 +82,7 @@ public class SendMessageHandler : CommandHandler
             }
             catch
             {
-                chat.ConnectedClients.Remove(chatClient);
+                _chatConnectionService.RemoveClient(chatClient);
             }
         }
     }

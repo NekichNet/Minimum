@@ -8,9 +8,9 @@ public class Message
     public int ChatId { get; set; }
     public int AuthorId { get; set; }
     public bool IsFile { get; set; } = false;
-    public string FileName { get; set; }
+    public string FileName { get; set; } = string.Empty;
     public long FileSize { get; set; }
-    public string FileId { get; set; }
+    public string FileId { get; set; } = string.Empty;
     public bool IsUploaded { get; set; } = false;
 
 

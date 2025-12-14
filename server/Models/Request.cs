@@ -9,6 +9,7 @@ public class Request // dto
     public int? ChatId { get; set; }
     public string? MessageText { get; set; }
     public string? Token { get; set; }
+    public int? Limit { get; set; } = 25;
 
     public string? FileName { get; set; }
     public string? FileId { get; set; }

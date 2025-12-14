@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using server.Commands;
 using server.Models;
-using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -41,6 +40,8 @@ public class TcpChatService
             ["download_file"] = (req, s, c) => new DownloadFileHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir).HandleAsync(req, s, c),
             ["join_chat"] = (req, s, c) => new JoinChatHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["validate_token"] = (req, s, c) => new ValidateTokenHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
+            ["get_user_chats"] = (req, s, c) => new GetUserChatsHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
+            ["get_chat_messages"] = (req, s, c) => new GetChatMessagesHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
         };
     }
 

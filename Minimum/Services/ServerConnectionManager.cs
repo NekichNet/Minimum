@@ -1,7 +1,6 @@
 ﻿using Minimum.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -20,14 +19,14 @@ namespace Minimum.Services
         public ServerConnectionManager()
         {
             client = new TcpClient();
-            ServerEndPoint = new IPEndPoint(IPAddress.Any, 8080);
+            ServerEndPoint = new IPEndPoint(IPAddress.Any, 31584);
         }
 
         public async Task StartConnection()
         {
             if (!client.Connected)
             {
-                await client.ConnectAsync("127.0.0.1", 8080);
+                await client.ConnectAsync("127.0.0.1", 31584);
             }
             else
             {

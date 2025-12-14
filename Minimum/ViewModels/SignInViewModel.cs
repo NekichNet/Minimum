@@ -11,9 +11,10 @@ using System.Threading.Tasks;
 
 namespace Minimum.ViewModels
 {
-    public class SignInViewModel
+    public class SignInViewModel : ViewModelBase
     {
         public event Action<string>? Authenticated;
+        private readonly SignInUpView _signInUpView;
 
         public string Input_Login { get; set; } = string.Empty;
         public string Text_LoginWatermark { get; set; } = "Введите логин";
@@ -28,8 +29,9 @@ namespace Minimum.ViewModels
         public ReactiveCommand<Unit, Unit> Click_SignIn { get; }
         public ReactiveCommand<Unit, Unit> Click_GoToSignUp { get; }
 
-        public SignInViewModel()
+        public SignInViewModel(SignInUpView signInUpView)
         {
+            _signInUpView = signInUpView;
             Bool_RevealPassword = false;
             Text_PasswordChar = '•';
             Click_RevealPassword = ReactiveCommand.Create(RevealPassword);
@@ -59,7 +61,8 @@ namespace Minimum.ViewModels
         private async Task GoToSignUp()
         {
             var nav = new NavigationService();
-            nav.NavigateTo<SignUpView>();
+            _signInUpView.ShowSignUpView();
+            //nav.NavigateTo<SignUpView>();
             await Task.CompletedTask;
         }
 
@@ -78,9 +81,12 @@ namespace Minimum.ViewModels
                     {
                         Authenticated?.Invoke(resp.Token);
 
+                        var win = new MainWindow();
+                        win.Show();
 
-                        var nav = new NavigationService();
-                        nav.NavigateTo<ChatView>();
+                        _signInUpView.Close();
+                        //var nav = new NavigationService();
+                        //nav.NavigateTo<ChatView>();
                     }
                 }
                 else

@@ -14,27 +14,7 @@ public partial class SignInUpView : Window
     public SignInUpView()
     {
         InitializeComponent();
-        if (true)
-        {
-            ShowSignUpView();
-        }
-        else
-        {
-            ShowSignInView();
-        }
-    }
-
-
-    public SignInUpView(bool startWithSignUp) : this()
-    {
-        if (startWithSignUp)
-        {
-            ShowSignUpView();
-        }
-        else
-        {
-            ShowSignInView();
-        }
+        ShowSignInView();
     }
 
     private void InitializeComponent()
@@ -45,14 +25,14 @@ public partial class SignInUpView : Window
     // Показать экран входа
     public void ShowSignInView()
     {
-        var view = new SignInView();
+        var view = new SignInView(this);
         GetContentHost().Content = view;
     }
 
     // Показать экран регистрации
     public void ShowSignUpView()
     {
-        var view = new SignUpView();
+        var view = new SignUpView(this);
         GetContentHost().Content = view;
     }
 

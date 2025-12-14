@@ -72,8 +72,9 @@ namespace Minimum.ViewModels
         {
             try
             {
-                var scm = new Services.ServerConnectionManager();
-                await scm.StartConnection();
+                var cacheService = new CacheService();
+                var scm = new Services.ServerConnectionManager(cacheService);
+                //await scm.StartConnection();
                 var resp = await scm.SignIn(Input_Login, Input_Password);
 
                 if (resp != null && resp.Success)
@@ -98,13 +99,17 @@ namespace Minimum.ViewModels
 
         private async Task CheckToken()
         {
-            string token = "123";
-            var con = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
-            var res = await con.CheckToken(token);
+            var token = await App.ServiceProvider.GetRequiredService<CacheService>().LoadTokenAsync();
 
-            if (res.Success == true)
+            if (!string.IsNullOrEmpty(token))
             {
-                await AutoLogin();
+                var con = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
+                var res = await con.CheckToken(token);
+
+                if (res.Success == true)
+                {
+                    await AutoLogin();
+                }
             }
         }
 

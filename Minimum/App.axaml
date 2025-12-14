@@ -1,14 +1,33 @@
 <Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="using:Minimum"
-             xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
-             x:Class="Minimum.App"
-             RequestedThemeVariant="Default">
-    <Application.Styles>
-        <SimpleTheme />
-        <StyleInclude Source="avares://IconPacks.Avalonia.Material/Material.axaml" />
-    </Application.Styles>
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
+			 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:local="using:Minimum"
+			 xmlns:iconPacks="https://github.com/MahApps/IconPacks.Avalonia"
+			 x:Class="Minimum.App"
+			 RequestedThemeVariant="Default">
+	<Application.Styles>
+		<SimpleTheme />
+		<StyleInclude Source="avares://IconPacks.Avalonia.Material/Material.axaml" />
+		<Style Selector="Button">
+			<Setter Property="Background" Value="{DynamicResource Accent2}"></Setter>
+			<Setter Property="BorderBrush" Value="{DynamicResource Accent1}"></Setter>
+			<Setter Property="Foreground" Value="{DynamicResource AccentForeground}"></Setter>
+		</Style>
+		<Style Selector="TextBox">
+			<Setter Property="Background" Value="{DynamicResource Accent2}"></Setter>
+			<Setter Property="BorderBrush" Value="{DynamicResource Accent1}"></Setter>
+			<Setter Property="Foreground" Value="{DynamicResource AccentForeground}"></Setter>
+		</Style>
+		<Style Selector="ComboBox">
+			<Setter Property="Background" Value="{DynamicResource Accent2}"></Setter>
+			<Setter Property="BorderBrush" Value="{DynamicResource Accent1}"></Setter>
+			<Setter Property="Foreground" Value="{DynamicResource AccentForeground}"></Setter>
+		</Style>
+		<Style Selector="Border.Accent">
+			<Setter Property="Background" Value="{DynamicResource Accent2}"></Setter>
+			<Setter Property="BorderBrush" Value="{DynamicResource Accent1}"></Setter>
+		</Style>
+	</Application.Styles>
+	<Application.DataTemplates>
+		<local:ViewLocator/>
+	</Application.DataTemplates>
 </Application>

@@ -2,19 +2,34 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Threading;
+using Microsoft.Extensions.DependencyInjection;
+using Minimum.Services;
 using Minimum.ViewModels;
 using Minimum.Views;
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace Minimum;
 
 public partial class SignInUpView : Window
 {
+    private readonly CacheService _cacheService;
+    public ObservableCollection<ChatViewModel> Chats { get; } = new();
+
     public SignInUpView()
     {
         InitializeComponent();
         ShowSignInView();
+        _cacheService = App.ServiceProvider.GetRequiredService<CacheService>();
+    }
+
+
+    public SignInUpView(CacheService cacheService)
+    {
+        _cacheService = cacheService;
+
+        _ = LoadCachedChatsAsync();
     }
 
     private void InitializeComponent()
@@ -78,5 +93,15 @@ public partial class SignInUpView : Window
             await Task.Delay(1); 
             this.Close();
         });
+    }
+
+
+    public async Task LoadCachedChatsAsync()
+    {
+        var cachedChats = await _cacheService.LoadChatsAsync();
+        foreach (var chat in cachedChats)
+        {
+            Chats.Add(new ChatViewModel(chat, _cacheService));
+        }
     }
 }

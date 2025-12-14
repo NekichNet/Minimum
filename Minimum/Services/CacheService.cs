@@ -16,15 +16,19 @@ namespace Minimum.Services
         private readonly string _messagesDir;
         private readonly string _filesDir;
         private readonly string _avatarsDir;
+        private readonly string _settingsFile;
+        private readonly string _tokenFile;
         private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { WriteIndented = true };
 
-        public CacheService(string? root = null) 
+        public CacheService(string? root = null)
         {
             _root = root ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MinimumCache");
             _chatsFile = Path.Combine(_root, "chats.json");
             _messagesDir = Path.Combine(_root, "messages");
             _filesDir = Path.Combine(_root, "files");
             _avatarsDir = Path.Combine(_root, "avatars");
+            _settingsFile = Path.Combine(_root, "settings.json");
+            _tokenFile = Path.Combine(_root, "token.json");
 
             Directory.CreateDirectory(_root);
             Directory.CreateDirectory(_messagesDir);
@@ -117,5 +121,63 @@ namespace Minimum.Services
             return File.Exists(path) ? path : null;
         }
 
+
+
+        // User Settings
+        public async Task SaveSettingsAsync(UserSettings settings)
+        {
+            var json = JsonSerializer.Serialize(settings, _jsonOptions);
+            await File.WriteAllTextAsync(_settingsFile, json);
+        }
+
+        public async Task<UserSettings> LoadSettingsAsync()
+        {
+            if (!File.Exists(_settingsFile))
+                return new UserSettings();
+
+            var json = await File.ReadAllTextAsync(_settingsFile);
+            return JsonSerializer.Deserialize<UserSettings>(json, _jsonOptions) ?? new UserSettings();
+        }
+
+
+
+        // Token
+        public async Task SaveTokenAsync(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return;
+            }
+            var json = JsonSerializer.Serialize(new { Token = token }, _jsonOptions);
+            await File.WriteAllTextAsync(_tokenFile, json);
+        }
+
+        public async Task<string?> LoadTokenAsync()
+        {
+            if (!File.Exists(_tokenFile))
+                return null;
+            var json = await File.ReadAllTextAsync(_tokenFile);
+            try
+            {
+                var doc = JsonDocument.Parse(json);
+                if (doc.RootElement.TryGetProperty("Token", out var tokenElement))
+                {
+                    return tokenElement.GetString();
+                }
+            }
+            catch
+            {
+                return null;
+            }
+            return null;
+        }
+
+        public void ClearToken()
+        {
+            if (File.Exists(_tokenFile))
+            {
+                File.Delete(_tokenFile);
+            }
+        }
     }
 }

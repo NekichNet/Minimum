@@ -37,6 +37,7 @@ namespace Minimum.Services
             if (!client.Connected)
             {
                 await client.ConnectAsync("127.0.0.1", 8080);
+                await RestoreTokenAsync();
             }
             else
             {
@@ -114,6 +115,7 @@ namespace Minimum.Services
             if (resp != null && resp.Success && !string.IsNullOrWhiteSpace(resp.Token))
             {
                 Token = resp.Token;
+                await _cacheService.SaveTokenAsync(Token);
             }
 
             return resp;
@@ -134,9 +136,17 @@ namespace Minimum.Services
             if (resp != null && resp.Success && !string.IsNullOrWhiteSpace(resp.Token))
             {
                 Token = resp.Token;
+                await _cacheService.SaveTokenAsync(Token);
             }
 
             return resp;
+        }
+
+
+        public async Task SignOut()
+        {
+            Token = null;
+            _cacheService.ClearToken();
         }
 
 
@@ -315,6 +325,16 @@ namespace Minimum.Services
             if (resp.Success && resp.Chat != null)
             {
                 await _cacheService.SaveChatsAsync(new[] { resp.Chat });
+            }
+        }
+
+
+        public async Task RestoreTokenAsync()
+        {
+            var cachedToken = await _cacheService.LoadTokenAsync();
+            if (!string.IsNullOrWhiteSpace(cachedToken))
+            {
+                Token = cachedToken;
             }
         }
     }

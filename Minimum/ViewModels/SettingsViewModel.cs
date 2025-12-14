@@ -123,7 +123,7 @@ namespace Minimum.ViewModels
                 Accent1 = accent1.ToString(),
                 Accent2 = accent2.ToString(),
                 AccentForeground = accentForeground.ToString(),
-                AvatarPath = "user_avatar.png" // путь к сохранённому файлу
+                AvatarPath = "user_avatar.png"
             };
 
             await _cacheService.SaveSettingsAsync(settings);

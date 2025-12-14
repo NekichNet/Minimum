@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using DynamicData;
@@ -26,10 +28,13 @@ namespace Minimum.ViewModels
         public ChatHeaderViewModel Assigned_ChatHeaderViewModel { get; set; }
 
         public ReactiveCommand<Unit, Unit> Click_AttachFile { get; set; }
+        public ReactiveCommand<string, Unit> DownloadFileCommand { get; }
         private CacheService _cache;
+        private Message msg;
         private const int KeepLastMessages = 50;
+        private readonly ServerConnectionManager _scm;
 
-        public ChatViewModel(Chat chat, ChatView parent)
+        public ChatViewModel(Chat chat, ChatView parent, ServerConnectionManager scm)
         {
             Messages.AddRange(chat.Messages);
             Users.AddRange(chat.Users);
@@ -37,7 +42,6 @@ namespace Minimum.ViewModels
             Name = chat.Name;
             Assigned_ChatHeaderViewModel = new ChatHeaderViewModel();
             Assigned_ChatHeaderViewModel.SetPictureDelegateHolder = SetBackgroundPicture;
-            Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFile);
             _cache = new CacheService();
 
             ChatHeaderView chatHeader = new ChatHeaderView();
@@ -45,8 +49,26 @@ namespace Minimum.ViewModels
             chatHeaderModel.ChatData = chat;
             chatHeader.DataContext = chatHeaderModel;
 
+
             (parent as ChatView).ChatHeaderContainer.Child = chatHeader;
+            _scm = scm;
+
+            _ = LoadCachedMessagesAsync(chat.Id);
+            Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFileAsync);
+
+
+            msg.DownloadFileCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                var destination = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), msg.FileName);
+                var resp = await _scm.DownloadFile(msg.FileId, destination, msg.FileSize);
+                if (resp.Success)
+                {
+                    // уведомление
+                }
+            });
         }
+
+
 
         public async Task AttachFile()
         {
@@ -185,6 +207,53 @@ namespace Minimum.ViewModels
             cached.Add(msg);
             var trimmed = cached.OrderBy(m => m.Time).TakeLast(KeepLastMessages).ToList();
             await _cache.SaveMessagesAsync(chatId, trimmed);
+        }
+
+
+
+        private async Task AttachFileAsync()
+        {
+            var topLevel = TopLevel.GetTopLevel(Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime d ? d.MainWindow : null);
+            if (topLevel == null) return;
+
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Выберите файл",
+                AllowMultiple = false
+            });
+
+            var file = files?.FirstOrDefault();
+            if (file == null) return;
+
+            var path = file.TryGetLocalPath();
+            if (string.IsNullOrEmpty(path)) return;
+
+            var fi = new FileInfo(path);
+            var fileId = Guid.NewGuid().ToString();
+
+            var resp = await _scm.SendFilePlaceholder(fi.Name, fi.Length, fileId, Id);
+
+            if (resp.Success)
+            {
+                var msg = new Message(fi.Name, fi.Length, fileId, 0, Id, new User { Name = "Я" })
+                {
+                    IsFile = true,
+                    IsUploaded = false
+                };
+                await AppendMessageAndCacheAsync(Id, msg);
+
+                using var fs = File.OpenRead(path);
+                var buffer = new byte[8192];
+                int read;
+                while ((read = await fs.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                {
+                    bool isComplete = fs.Position == fs.Length;
+                    var chunk = buffer.Take(read).ToArray();
+                    await _scm.UploadFileChunk(fileId, chunk, isComplete);
+                }
+
+                msg.IsUploaded = true;
+            }
         }
 
 

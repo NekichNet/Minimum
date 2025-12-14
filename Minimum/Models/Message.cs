@@ -1,6 +1,8 @@
-﻿using System;
+﻿using ReactiveUI;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -20,6 +22,9 @@ namespace Minimum.Models
         public bool IsUploaded { get; set; } = false;
 
 
+        public ReactiveCommand<Unit, Unit> DownloadFileCommand { get; set; }
+
+
         public Chat Chat { get; set; }
         public User Author { get; set; }
 
@@ -34,10 +39,11 @@ namespace Minimum.Models
             Author = author;
         }
 
-        public Message(string fileName, long fileSize, string fileId, int authorId, User author)
+        public Message(string fileName, long fileSize, string fileId, int authorId, int id, User author)
         {
             Text = $"Файл: {fileName}";
             AuthorId = authorId;
+            Id = id;
             Author = author;
             Time = DateTime.UtcNow;
             IsFile = true;

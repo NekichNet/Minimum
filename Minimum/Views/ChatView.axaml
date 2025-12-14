@@ -79,14 +79,6 @@
 									</Grid>
 								</Grid>
 							</Border>
-
-							<Border Margin="3" Padding="5" CornerRadius="10" Background="{Binding Author, Converter={StaticResource IdTBG}}" HorizontalAlignment="{Binding Author, Converter={StaticResource IdTP}}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" IsVisible="{Binding FileName, Converter={StaticResource FNTV}}">
-								<Grid>
-									<TextBlock TextWrapping="Wrap" Text="{Binding FileName}"></TextBlock>
-									<Button HorizontalAlignment="Right" VerticalAlignment="Center"></Button>
-								</Grid>
-							</Border>
-
 						</Grid>
 
 					</DataTemplate>
@@ -99,13 +91,12 @@
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition></ColumnDefinition>
 					<ColumnDefinition Width="auto"></ColumnDefinition>
-					<ColumnDefinition Width="auto"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
 
-				<TextBox Name="InputTextBox" Grid.Column="0" Margin="3 0 3 1.5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"></TextBox>
+				<!--<TextBox Name="InputTextBox" Grid.Column="0" Margin="3 0 3 1.5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"></TextBox>
 				<Button Command="{Binding Click_AttachFile}" Name="AttachFileButton" Grid.Column="1" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 					<iconPacks:PackIconMaterial Kind="AttachmentPlus"></iconPacks:PackIconMaterial>
-				</Button>
+				</Button>-->
 				<Button Name="SendButton" Grid.Column="2" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 					<iconPacks:PackIconMaterial Kind="Send"></iconPacks:PackIconMaterial>
 				</Button>

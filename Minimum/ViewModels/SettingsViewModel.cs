@@ -57,18 +57,6 @@ namespace Minimum.ViewModels
         [Reactive] public Bitmap? Avatar { get; set; }
 
 
-
-        public ReactiveCommand<Unit, Unit> Click_UploadPFP { get; set; }
-        public ReactiveCommand<Unit, Unit> Click_LogOff { get; set; }
-
-        public SettingsViewModel()
-        {
-            Click_UploadPFP = ReactiveCommand.CreateFromTask(UploadPFP);
-            Click_LogOff = ReactiveCommand.CreateFromTask(LogOff);
-
-        }
-
-
         public async Task LogOff()
         {
             // Код для того, чтобы выйти из аккаунта и удалить токен усера

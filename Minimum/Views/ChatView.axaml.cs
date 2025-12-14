@@ -9,7 +9,6 @@ namespace Minimum.Views;
 
 public partial class ChatView : UserControl
 {
-    CacheService CacheService = new CacheService();
     public ChatView(Chat chat)
     {
         InitializeComponent();

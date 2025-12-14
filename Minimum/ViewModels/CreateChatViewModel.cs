@@ -53,7 +53,7 @@ namespace Minimum.ViewModels
         }
         public async Task EnterChat()
         {
-            Response response = await App.ServiceProvider.GetRequiredService<ServerConnectionManager>().CreateChat(Input_JoinChatChatName);
+            Response response = await App.ServiceProvider.GetRequiredService<ServerConnectionManager>().JoinChat(Convert.ToInt32(Input_JoinChatChatName));
             if (response.Success)
             {
                 Chat chat = new Chat() { Id = Convert.ToInt32(Input_JoinChatChatName), Name = response.Message };

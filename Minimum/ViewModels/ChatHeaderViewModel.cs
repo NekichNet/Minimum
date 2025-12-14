@@ -26,6 +26,7 @@ namespace Minimum.ViewModels
 
         public ChatHeaderView Parent { get; set; } = new ChatHeaderView();
         public string HeaderTitle { get; set; } = "Template title";
+        public bool IsPaneWithUsersIsOpen { get; set; } = false;
         public string HeaderImageSource { get; set; } = string.Empty;
         public string BTN_CONTENT { get; set; } = "Вверх/вниз";
 
@@ -41,10 +42,12 @@ namespace Minimum.ViewModels
 
 
         public ReactiveCommand<Unit, Unit> Click_ChangeBGPicture { get; set; }
+        public ReactiveCommand<Unit, Unit> Click_OpenUsersPane { get; set; }
 
         public ChatHeaderViewModel()
         {
             Click_ChangeBGPicture = ReactiveCommand.CreateFromTask(ChangeBGPicture);
+            Click_OpenUsersPane = ReactiveCommand.Create(() => { IsPaneWithUsersIsOpen = !IsPaneWithUsersIsOpen; });
         }
         public async Task ChangeBGPicture()
         {

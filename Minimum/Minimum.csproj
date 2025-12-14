@@ -33,6 +33,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="ReactiveUI.Avalonia" />
     <PackageReference Include="ReactiveUI.Fody" />
+    <PackageReference Include="ThemeEditor.Controls.ColorPicker" />
   </ItemGroup>
 
   <ItemGroup>

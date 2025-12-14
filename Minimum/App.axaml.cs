@@ -1,10 +1,8 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using Microsoft.Extensions.DependencyInjection;
 using Minimum.Services;
-using Minimum.ViewModels;
 using Minimum.Views;
 using Color = Avalonia.Media.Color;
 using System;
@@ -26,6 +24,7 @@ public partial class App : Application
 
         services.AddSingleton<ServerConnectionManager>();
         services.AddSingleton<UserProviderService>();
+        services.AddTransient<CacheService>();
 
         _serviceProvider = services.BuildServiceProvider();
         ServiceProvider = _serviceProvider;

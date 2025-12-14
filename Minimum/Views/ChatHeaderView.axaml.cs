@@ -19,7 +19,5 @@ public partial class ChatHeaderView : UserControl
     public ChatHeaderView()
     {
         InitializeComponent();
-        DataContext = new ChatHeaderViewModel();
-        (DataContext as ChatHeaderViewModel).Text_ChatId = $"{ChatId}";
     }
 }

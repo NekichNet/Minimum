@@ -3,27 +3,29 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Minimum.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d"
+             xmlns:cp="clr-namespace:ThemeEditor.Controls.ColorPicker;assembly=ThemeEditor.Controls.ColorPicker"
              x:Class="Minimum.View.SettingsView" x:DataType="vm:SettingsViewModel">
+    <UserControl.Styles>
+		<StyleInclude Source="avares://ThemeEditor.Controls.ColorPicker/ColorPicker.axaml" />
+    </UserControl.Styles>
+    
     <Grid Margin="20">
-        <StackPanel Spacing="10">
-            <TextBlock Text="Настройки" FontSize="20" FontWeight="Bold" />
-        <StackPanel Spacing="10">
-            <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Left"/>
-
-            <TextBlock Text="{Binding UsernameTag}"  HorizontalAlignment="Left"/>
-            <TextBox Text="{Binding Username}" Width="200" HorizontalAlignment="Left"/>
-            
-            <TextBlock Text="{Binding AvatarTag}" HorizontalAlignment="Left"/>
-            <Image Stretch="Uniform" Source="{Binding Avatar}" Width="100" Height="100" HorizontalAlignment="Left"/>
-            <Button Content="{Binding LoadAvatarTag}" Command="{Binding Click_UploadPFP}" Width="150" HorizontalAlignment="Left"/>
-
-            <TextBlock Text="Тема:" />
-            <!--<ComboBox Items="{Binding Themes}" SelectedItem="{Binding SelectedTheme}" Width="200"/>
-
-            <Button Content="Сохранить" Command="{Binding SaveCommand}" Width="100"/>-->
-        </StackPanel>
-            <Button Content="{Binding QuitTag}" Width="150" HorizontalAlignment="Left"></Button>
-        </StackPanel>
+        <ScrollViewer>
+			<StackPanel Spacing="10">
+                <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Left"/>
+                <TextBlock Text="{Binding AvatarTag}" HorizontalAlignment="Left"/>
+                <Image Stretch="Uniform" Source="{Binding Avatar}" Width="100" Height="100" HorizontalAlignment="Left"/>
+                <Button Content="{Binding LoadAvatarTag}" Command="{Binding Click_UploadPFP}" Width="150" HorizontalAlignment="Left"/>
+                <TextBlock Text="{Binding UsernameTag}"  HorizontalAlignment="Left"/>
+                <TextBox Text="{Binding Username}" Width="200" HorizontalAlignment="Left"/>
+                <Button Content="{Binding QuitTag}" Width="150" HorizontalAlignment="Left"></Button>
+                <TextBlock Text="{Binding ThemeTag}" HorizontalAlignment="Left"></TextBlock>
+                <ComboBox SelectedItem="{Binding Theme}" ItemsSource="{Binding Themes}" Width="150" HorizontalAlignment="Left"></ComboBox>
+                <TextBlock Text="{Binding ColorTag}" HorizontalAlignment="Left"></TextBlock>
+                <Button Content="{Binding UpdateColorTag}" Command="{Binding UpdateAccent}" Width="150" HorizontalAlignment="Left"></Button>
+                <cp:ColorPicker x:Name="AccentPicker" Color="LightBlue" Width="250" HorizontalAlignment="Left"></cp:ColorPicker>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </UserControl>

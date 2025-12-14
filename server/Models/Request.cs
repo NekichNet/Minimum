@@ -11,6 +11,7 @@ public class Request // dto
     public string? MessageText { get; set; }
     public string? Token { get; set; }
     public int? Limit { get; set; } = 25;
+    public int? Offset { get; set; } = 0;
 
     public byte[] AvatarData { get; set; } = Array.Empty<byte>();
     public string AvatarFileName { get; set; } = string.Empty;

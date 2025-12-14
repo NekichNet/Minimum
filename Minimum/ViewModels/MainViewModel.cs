@@ -14,6 +14,9 @@ public class MainViewModel : ViewModelBase
     public MainViewModel(MainWindow mainWindow)
     {
         _mainView = mainWindow;
+
+        ((AddChat.AssignedUserControl as View.CreateChatView).DataContext as CreateChatViewModel).ChatListViewModel = (_mainView.ChatList.DataContext as ChatListViewModel);
+
         (_mainView.ChatList.DataContext as ChatListViewModel).OnChoosingOption += SetSelectionContent;
         (_mainView.ChatList.DataContext as ChatListViewModel).Chats.Insert(0, SettingOption);
         (_mainView.ChatList.DataContext as ChatListViewModel).Chats.Insert(1, AddChat);

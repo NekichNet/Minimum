@@ -6,7 +6,7 @@ public class AuthToken
     public string Token { get; set; } = string.Empty;
     public int UserId { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? ExpiresAt { get; set; }
+    public DateTime? ExpiresAt { get; set; } = DateTime.UtcNow.AddDays(7);
 
 
     public virtual User User { get; set; } = null!;

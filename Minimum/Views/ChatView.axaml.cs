@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Minimum.Models;
+using Minimum.Services;
 using Minimum.ViewModels;
 
 namespace Minimum.Views;

@@ -17,13 +17,18 @@ namespace Minimum.Services
         private TcpClient client;
         public IPEndPoint ServerEndPoint { get; set; }
 
+        private readonly CacheService _cacheService;
+
         public string? Token { get; private set; }
 
 
-        public ServerConnectionManager()
+        public ServerConnectionManager(CacheService cacheService)
         {
             client = new TcpClient();
             ServerEndPoint = new IPEndPoint(IPAddress.Any, 31584);
+
+            _cacheService = cacheService;
+            StartConnection();
         }
 
 
@@ -33,6 +38,7 @@ namespace Minimum.Services
             if (!client.Connected)
             {
                 await client.ConnectAsync("127.0.0.1", 31584);
+                await RestoreTokenAsync();
             }
             else
             {
@@ -117,8 +123,6 @@ namespace Minimum.Services
                 AvatarData = bytes
             };
             return await SendRequest(req);
-            
-            return new Response();
         }
 
 
@@ -136,6 +140,7 @@ namespace Minimum.Services
             if (resp != null && resp.Success && !string.IsNullOrWhiteSpace(resp.Token))
             {
                 Token = resp.Token;
+                await _cacheService.SaveTokenAsync(Token);
             }
 
             return resp;
@@ -156,9 +161,17 @@ namespace Minimum.Services
             if (resp != null && resp.Success && !string.IsNullOrWhiteSpace(resp.Token))
             {
                 Token = resp.Token;
+                await _cacheService.SaveTokenAsync(Token);
             }
 
             return resp;
+        }
+
+
+        public async Task SignOut()
+        {
+            Token = null;
+            _cacheService.ClearToken();
         }
 
 
@@ -166,10 +179,15 @@ namespace Minimum.Services
         {
             var req = new Request()
             {
+                Token = Token,
                 Type = "create_chat",
                 ChatName = chatName
             };
-            return await SendRequest(req);
+            var resp = await SendRequest(req);
+
+            await CacheChatIfNeeded(resp);
+
+            return resp;
         }
 
 
@@ -335,6 +353,23 @@ namespace Minimum.Services
             };
 
             return await SendRequest(req);
+        }
+
+        private async Task CacheChatIfNeeded(Response resp)
+        {
+            if (resp.Success && resp.Chat != null)
+            {
+                await _cacheService.SaveChatsAsync(new[] { resp.Chat });
+            }
+        }
+
+        public async Task RestoreTokenAsync()
+        {
+            var cachedToken = await _cacheService.LoadTokenAsync();
+            if (!string.IsNullOrWhiteSpace(cachedToken))
+            {
+                Token = cachedToken;
+            }
         }
     }
 }

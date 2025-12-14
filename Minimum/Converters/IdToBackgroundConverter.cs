@@ -18,7 +18,10 @@ namespace Minimum.Converters
         {
             if (value != null)
             {
-                return (value as User).Id != App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser.Id ? "Gray" : "Blue";
+                object accent1, accent2;
+                Application.Current.Resources.TryGetResource("Accent1", Application.Current.ActualThemeVariant, out accent1);
+                Application.Current.Resources.TryGetResource("Accent2", Application.Current.ActualThemeVariant, out accent2);
+                return (value as User).Id != App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser.Id ? accent1.ToString() : accent2.ToString();
             }
             return "Red";
         }

@@ -79,14 +79,6 @@
 									</Grid>
 								</Grid>
 							</Border>
-
-							<Border Margin="3" Padding="5" CornerRadius="10" Background="{Binding Author, Converter={StaticResource IdTBG}}" HorizontalAlignment="{Binding Author, Converter={StaticResource IdTP}}" Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="1" IsVisible="{Binding FileName, Converter={StaticResource FNTV}}">
-								<Grid>
-									<TextBlock TextWrapping="Wrap" Text="{Binding FileName}"></TextBlock>
-									<Button Content="⬇" Command="{Binding DownloadFileCommand}" />
-								</Grid>
-							</Border>
-
 						</Grid>
 
 					</DataTemplate>
@@ -98,7 +90,6 @@
 			<Grid>
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition></ColumnDefinition>
-					<ColumnDefinition Width="auto"></ColumnDefinition>
 					<ColumnDefinition Width="auto"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
 

@@ -19,13 +19,12 @@ public class LoginHandler : CommandHandler
         {
             string token = Guid.NewGuid().ToString();
 
-            // Сохраняем токен в БД
             var authToken = new AuthToken
             {
                 Token = token,
                 UserId = user.Id,
                 CreatedAt = DateTime.UtcNow,
-                ExpiresAt = null // Можно установить время истечения
+                ExpiresAt = null
             };
 
             await UserRepository.AddTokenAsync(authToken);

@@ -51,7 +51,7 @@ namespace Minimum.ViewModels
                         {
                         new FilePickerFileType("Любой")
                         {
-                            Patterns = new[] { "*"},
+                            Patterns = new[] { "*" },
                         }
                     }
                 });

@@ -10,28 +10,28 @@ public class LoginHandler : CommandHandler
     public LoginHandler(
         IUserRepository userRepository,
         IChatRepository chatRepository,
-        IMessageRepository messageRepository,
-        ConcurrentDictionary<string, string> tokens) : base(userRepository, chatRepository, messageRepository, tokens) { }
+        IMessageRepository messageRepository) : base(userRepository, chatRepository, messageRepository) { }
 
     public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
-        try
+        var user = await UserRepository.GetUserByNameAsync(request.Username);
+        if (user != null && user.Password == request.Password)
         {
-            var user = await UserRepository.GetUserByNameAsync(request.Username);
-            if (user != null && user.Password == request.Password)
+            string token = Guid.NewGuid().ToString();
+
+            var authToken = new AuthToken
             {
-                string token = Guid.NewGuid().ToString();
-                UserTokens.TryAdd(token, user.Name);
-                return new Response { Success = true, Message = "Успешный вход.", Token = token };
-            }
+                Token = token,
+                UserId = user.Id,
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = null
+            };
 
-            return new Response { Success = false, Message = "Неверный логин или пароль." };
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
+            await UserRepository.AddTokenAsync(authToken);
+
+            return new Response { Success = true, Message = "Успешный вход.", Token = token };
         }
 
-        return new Response { Success = false, Message = "123" };
+        return new Response { Success = false, Message = "Неверный логин или пароль." };
     }
 }

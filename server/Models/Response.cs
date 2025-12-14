@@ -7,5 +7,7 @@ public class Response // dto
     public string Token { get; set; }
     public int? ChatId { get; set; }
 
-    public List<string> Chats { get; set; }
+    public List<string> Chats { get; set; } = new List<string>();
+
+    public object Data { get; set; } = null!;
 }

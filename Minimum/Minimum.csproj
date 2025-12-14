@@ -42,6 +42,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Views\SignInUpWindow.axaml.cs">
+      <DependentUpon>SignInUpWindow.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Repositories\Interfaces\" />
   </ItemGroup>
 </Project>

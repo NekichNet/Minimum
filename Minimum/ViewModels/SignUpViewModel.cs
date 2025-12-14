@@ -12,6 +12,9 @@ namespace Minimum.ViewModels
 {
     public class SignUpViewModel : ViewModelBase
     {
+        private readonly SignInUpView _signInUpView;
+        public event Action<string>? Authenticated;
+
         public string Input_Login { get; set; } = string.Empty;
         public string Text_LoginWatermark { get; set; } = "Введите логин";
 
@@ -29,8 +32,10 @@ namespace Minimum.ViewModels
 
 
 
-        public SignUpViewModel()
+        public SignUpViewModel(SignInUpView signInUpView)
         {
+            _signInUpView = signInUpView;
+
             Click_SignUp = ReactiveCommand.CreateFromTask(TrySignUp);
             Click_GoToSignIn = ReactiveCommand.CreateFromTask(GoToSignIn);
         }
@@ -41,12 +46,28 @@ namespace Minimum.ViewModels
         {
             var req = new ServerConnectionManager();
             await req.StartConnection();
-            await req.SignUp(Input_Login, Input_Password);
-        }
-        private async Task GoToSignIn()
-        {
-            // любой код для перехода на страницу входа
+            var resp = await req.SignUp(Input_Login, Input_Password);
+
+            if (resp != null && resp.Success)
+            {
+                if (!string.IsNullOrWhiteSpace(resp.Token))
+                {
+                    Authenticated?.Invoke(resp.Token);
+                }
+            }
+            else
+            {
+                // отобразить ошибку/логировать
+            }
         }
 
+
+        private async Task GoToSignIn()
+        {
+            var nav = new NavigationService();
+            _signInUpView.ShowSignInView();
+            //nav.NavigateTo<SignInView>();
+            await Task.CompletedTask;
+        }
     }
 }

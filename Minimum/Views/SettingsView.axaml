@@ -7,6 +7,8 @@
              x:Class="Minimum.View.SettingsView" x:DataType="vm:SettingsViewModel">
     <Grid Margin="20">
         <StackPanel Spacing="10">
+            <TextBlock Text="Настройки" FontSize="20" FontWeight="Bold" />
+        <StackPanel Spacing="10">
             <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="Bold" HorizontalAlignment="Left"/>
 
             <TextBlock Text="{Binding UsernameTag}"  HorizontalAlignment="Left"/>
@@ -16,7 +18,12 @@
             <Image Stretch="Uniform" Source="{Binding Avatar}" Width="100" Height="100" HorizontalAlignment="Left"/>
             <Button Content="{Binding LoadAvatarTag}" Command="{Binding Click_UploadPFP}" Width="150" HorizontalAlignment="Left"/>
 
-            <Button Content="{Binding QuitTag}" Command="{Binding Click_LogOff}" Width="150" HorizontalAlignment="Left"></Button>
+            <TextBlock Text="Тема:" />
+            <!--<ComboBox Items="{Binding Themes}" SelectedItem="{Binding SelectedTheme}" Width="200"/>
+
+            <Button Content="Сохранить" Command="{Binding SaveCommand}" Width="100"/>-->
+        </StackPanel>
+            <Button Content="{Binding QuitTag}" Width="150" HorizontalAlignment="Left"></Button>
         </StackPanel>
     </Grid>
 </UserControl>

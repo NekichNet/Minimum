@@ -1,13 +1,12 @@
 ﻿using Minimum.Repositories.Interfaces;
 using server.Models;
-using System.Collections.Concurrent;
 using System.Net.Sockets;
 
 namespace server.Commands;
 
-public class JoinChatHandler : CommandHandler
+public class LeaveChatHandler : CommandHandler
 {
-    public JoinChatHandler(
+    public LeaveChatHandler(
         IUserRepository userRepository,
         IChatRepository chatRepository,
         IMessageRepository messageRepository) : base(userRepository, chatRepository, messageRepository) { }
@@ -36,6 +35,9 @@ public class JoinChatHandler : CommandHandler
             return new Response { Success = false, Message = "Пользователь не состоит в этом чате." };
         }
 
-        return new Response { Success = true, Message = "Вы присоединились к чату." };
+        chat.Users.Remove(user);
+        await ChatRepository.UpdateChatAsync(chat);
+
+        return new Response { Success = true, Message = "Вы покинули чат." };
     }
 }

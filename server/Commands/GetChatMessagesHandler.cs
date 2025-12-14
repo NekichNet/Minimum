@@ -1,13 +1,12 @@
 ﻿using Minimum.Repositories.Interfaces;
 using server.Models;
-using System.Collections.Concurrent;
 using System.Net.Sockets;
 
 namespace server.Commands;
 
-public class JoinChatHandler : CommandHandler
+public class GetChatMessagesHandler : CommandHandler
 {
-    public JoinChatHandler(
+    public GetChatMessagesHandler(
         IUserRepository userRepository,
         IChatRepository chatRepository,
         IMessageRepository messageRepository) : base(userRepository, chatRepository, messageRepository) { }
@@ -25,17 +24,15 @@ public class JoinChatHandler : CommandHandler
             return new Response { Success = false, Message = "ID чата не указан." };
         }
 
-        var chat = await ChatRepository.GetChatByIdAsync(request.ChatId.Value);
-        if (chat == null)
-        {
-            return new Response { Success = false, Message = "Чат не найден." };
-        }
+        var messages = await MessageRepository.GetLastMessagesAsync(request.ChatId.Value, request.Limit ?? 25);
 
-        if (!chat.Users.Contains(user))
-        {
-            return new Response { Success = false, Message = "Пользователь не состоит в этом чате." };
-        }
+        var messageList = messages.Select(m => new { m.Text, m.Author.Name, m.Time, m.IsFile, m.FileName, m.IsUploaded }).ToList();
 
-        return new Response { Success = true, Message = "Вы присоединились к чату." };
+        return new Response
+        {
+            Success = true,
+            Message = "Сообщения получены.",
+            Data = messageList
+        };
     }
 }

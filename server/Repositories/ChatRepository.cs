@@ -42,4 +42,11 @@ public class ChatRepository : IChatRepository
         _db.Chats.Update(chat);
         await _db.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<Chat>> GetUserChatsAsync(int userId)
+    {
+        return await _db.Chats
+            .Where(c => c.Users.Any(u => u.Id == userId))
+            .ToListAsync();
+    }
 }

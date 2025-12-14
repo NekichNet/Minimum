@@ -17,6 +17,7 @@
             <ColumnDefinition MinWidth="300"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+    <views:MainView />
         <views:ChatListView x:Name="ChatList" Grid.Column="0" Margin="3"></views:ChatListView>
 
         <GridSplitter Grid.Column="1"></GridSplitter>

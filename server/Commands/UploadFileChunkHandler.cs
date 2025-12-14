@@ -15,8 +15,7 @@ public class UploadFileChunkHandler : CommandHandler
         IUserRepository userRepository,
         IChatRepository chatRepository,
         IMessageRepository messageRepository,
-        ConcurrentDictionary<string, string> tokens,
-        string uploadDir) : base(userRepository, chatRepository, messageRepository, tokens)
+        string uploadDir) : base(userRepository, chatRepository, messageRepository)
     {
         _uploadDir = uploadDir;
         Directory.CreateDirectory(_uploadDir);

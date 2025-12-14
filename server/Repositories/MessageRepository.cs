@@ -14,7 +14,6 @@ public class MessageRepository : IMessageRepository
         _db = db;
     }
 
-
     public async Task AddMessageAsync(Message message)
     {
         await _db.Messages.AddAsync(message);
@@ -51,5 +50,15 @@ public class MessageRepository : IMessageRepository
     {
         _db.Messages.Update(message);
         await _db.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<Message>> GetLastMessagesAsync(int chatId, int limit)
+    {
+        return await _db.Messages
+            .Where(m => m.ChatId == chatId)
+            .OrderByDescending(m => m.Time)
+            .Take(limit)
+            .Include(m => m.Author)
+            .ToListAsync();
     }
 }

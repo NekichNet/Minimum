@@ -1,13 +1,12 @@
 ﻿using Minimum.Repositories.Interfaces;
 using server.Models;
-using System.Collections.Concurrent;
 using System.Net.Sockets;
 
 namespace server.Commands;
 
-public class CreateChatHandler : CommandHandler
+public class GetUserChatsHandler : CommandHandler
 {
-    public CreateChatHandler(
+    public GetUserChatsHandler(
         IUserRepository userRepository,
         IChatRepository chatRepository,
         IMessageRepository messageRepository) : base(userRepository, chatRepository, messageRepository) { }
@@ -20,12 +19,10 @@ public class CreateChatHandler : CommandHandler
             return new Response { Success = false, Message = "Невалидный токен." };
         }
 
-        var newChat = new Chat { Name = request.ChatName };
-        await ChatRepository.AddChatAsync(newChat);
+        var chats = await ChatRepository.GetUserChatsAsync(user.Id);
 
-        newChat.Users.Add(user);
-        await ChatRepository.UpdateChatAsync(newChat);
+        var chatNames = chats.Select(c => c.Name).ToList();
 
-        return new Response { Success = true, Message = "Чат создан.", ChatId = newChat.Id };
+        return new Response { Success = true, Chats = chatNames };
     }
 }

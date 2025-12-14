@@ -12,6 +12,8 @@ namespace Minimum.ViewModels
 {
     public class SignUpViewModel : ViewModelBase
     {
+        public event Action<string>? Authenticated;
+
         public string Input_Login { get; set; } = string.Empty;
         public string Text_LoginWatermark { get; set; } = "Введите логин";
 
@@ -41,7 +43,19 @@ namespace Minimum.ViewModels
         {
             var req = new ServerConnectionManager();
             await req.StartConnection();
-            var res = await req.SignUp(Input_Login, Input_Password);
+            var resp = await req.SignUp(Input_Login, Input_Password);
+
+            if (resp != null && resp.Success)
+            {
+                if (!string.IsNullOrWhiteSpace(resp.Token))
+                {
+                    Authenticated?.Invoke(resp.Token);
+                }
+            }
+            else
+            {
+                // отобразить ошибку/логировать
+            }
         }
 
 

@@ -13,6 +13,8 @@ namespace Minimum.ViewModels
 {
     public class SignInViewModel
     {
+        public event Action<string>? Authenticated;
+
         public string Input_Login { get; set; } = string.Empty;
         public string Text_LoginWatermark { get; set; } = "Введите логин";
 
@@ -72,8 +74,14 @@ namespace Minimum.ViewModels
 
                 if (resp != null && resp.Success)
                 {
-                    var nav = new NavigationService();
-                    nav.NavigateTo<ChatView>();
+                    if (!string.IsNullOrWhiteSpace(resp.Token))
+                    {
+                        Authenticated?.Invoke(resp.Token);
+
+
+                        var nav = new NavigationService();
+                        nav.NavigateTo<ChatView>();
+                    }
                 }
                 else
                 {

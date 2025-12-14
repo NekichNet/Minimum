@@ -4,27 +4,21 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Minimum.ViewModels"
              mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="400"
-             x:Class="Minimum.DragNDropView" Background="Transparent" x:DataType="vm:DragNDropViewModel"
-             >
-    <Grid DragDrop.AllowDrop="True" DragDrop.DragEnter="Grid_DragEnter" DragDrop.DragLeave="Grid_DragLeave" DragDrop.Drop="Grid_Drop">
-		<Border Background="Blue" Opacity="180" CornerRadius="10">
-           
-        </Border>
-         <Grid>
-				
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="1">
-				
-                <TextBlock IsVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="ExtraLight" FontSize="70">+</TextBlock>
-                
-            </StackPanel>
-            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="60">
-				
-                
-                <TextBlock IsVisible="False" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="20"></TextBlock>
-                <TextBlock HorizontalAlignment="Center" Text="{Binding Text_DragNDropClue}" VerticalAlignment="Center" FontSize="20"></TextBlock>
-            </StackPanel>
-             
-         </Grid>
+             x:Class="Minimum.DragNDropView" Background="Transparent" x:DataType="vm:DragNDropViewModel">
+    <Grid DragDrop.AllowDrop="True"
+          DragDrop.DragEnter="Grid_DragEnter"
+          DragDrop.DragLeave="Grid_DragLeave"
+          DragDrop.Drop="Grid_Drop">
+
+        <Border Background="{Binding BackgroundColor}" 
+                CornerRadius="10" 
+                Opacity="0.8"/>
+
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+            <TextBlock Text="{Binding Text_DragNDropClue}" 
+                       FontSize="20" 
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
     </Grid>
 
 </UserControl>

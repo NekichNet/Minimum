@@ -1,5 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -32,6 +33,7 @@ namespace Minimum.ViewModels
         private SettingsView _settingsView;
         private Avalonia.Styling.ThemeVariant _theme;
         private readonly CacheService _cacheService;
+        private readonly ServerConnectionManager _scm;
 
         public string Name { get; set; } = "Настройки";
         public string UsernameTag { get; set; } = "Имя пользователя:";
@@ -39,7 +41,10 @@ namespace Minimum.ViewModels
         public string LoadAvatarTag { get; set; } = "Загрузить аватар";
         public string ColorTag { get; set; } = "Акцентный цвет:";
         public string UpdateColorTag { get; set; } = "Сохранить цвет";
+
         public string QuitTag { get; set; } = "Выйти из аккаунта";
+        public ReactiveCommand<Unit, Unit> QuitCommand { get; private set; }
+
         public string Username { get; set; } = string.Empty;
 
 
@@ -53,13 +58,25 @@ namespace Minimum.ViewModels
             _cacheService = App.ServiceProvider.GetRequiredService<CacheService>();
             UpdateAccent = ReactiveCommand.Create(UpdateAccentColor);
             UpdateAccentColor();
+
+            _ = LoadSettings();
+
+            LogOff();
         }
         [Reactive] public Bitmap? Avatar { get; set; }
 
 
         public async Task LogOff()
         {
-            // Код для того, чтобы выйти из аккаунта и удалить токен усера
+            QuitCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await App.ServiceProvider.GetRequiredService<ServerConnectionManager>().SignOut();
+
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    desktop.Shutdown();
+                }
+            });
         }
 
 

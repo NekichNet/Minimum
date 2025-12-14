@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Platform.Storage;
+using Minimum.Models;
 using Minimum.Views;
 using ReactiveUI;
 using System;
@@ -19,10 +20,16 @@ namespace Minimum.ViewModels
         public SetPictureDelegate SetPictureDelegateHolder { get; set; }
 
 
+
+
+        public Chat ChatData { get; set; }
+
         public ChatHeaderView Parent { get; set; } = new ChatHeaderView();
         public string HeaderTitle { get; set; } = "Template title";
         public string HeaderImageSource { get; set; } = string.Empty;
         public string BTN_CONTENT { get; set; } = "Вверх/вниз";
+
+        public string Text_ChatId { get; set; } = "";
 
 
 

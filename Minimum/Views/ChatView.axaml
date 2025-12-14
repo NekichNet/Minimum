@@ -33,8 +33,13 @@
 			<RowDefinition Height="auto"></RowDefinition>
 		</Grid.RowDefinitions>
 
-		<local:ChatHeaderView DataContext="{Binding Assigned_ChatHeaderViewModel}" Grid.Row="0"></local:ChatHeaderView>
-
+		
+		<Border x:Name="ChatHeaderContainer">
+			
+		</Border>
+		
+		<!--<local:ChatHeaderView DataContext="{Binding Assigned_ChatHeaderViewModel}" Grid.Row="0"></local:ChatHeaderView>
+		-->
 		<ScrollViewer Grid.Row="1">
 			
 			<ItemsControl Name="MessageListBox" VerticalAlignment="Stretch" ItemsSource="{Binding Messages}">

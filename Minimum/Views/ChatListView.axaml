@@ -7,7 +7,7 @@
              x:Class="Minimum.Views.ChatListView" x:DataType="vm:ChatListViewModel">
   
     <Grid>
-		<ListBox SelectedIndex="{Binding CurrentIndex}"  ItemsSource="{Binding Chats}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+		<ListBox SelectedIndex="{Binding CurrentIndex}" ItemsSource="{Binding Chats}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" BorderThickness="0">
 			<ListBox.ItemTemplate>
 				<DataTemplate>
 					<Grid HorizontalAlignment="Stretch">

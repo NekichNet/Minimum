@@ -1,4 +1,5 @@
 ﻿using Minimum.Models;
+using Minimum.Views;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -24,9 +25,10 @@ namespace Minimum.ViewModels
         /// <returns></returns>
         public OnChoosingOptionDelegate OnChoosingOption { get; set; } // Делегируй этой делегате метод, который будет высасывать из ChatChooserOption Вью модель выбранного чата и усё.
 
-
         private int _currentIndex = 1; // Показывает индекс выбранного в данный момент поля
-        public int CurrentIndex { get 
+        public int CurrentIndex
+        {
+            get
             {
                 return _currentIndex;
             }
@@ -40,43 +42,18 @@ namespace Minimum.ViewModels
             }
         }
 
-        public ChatChooserOption SettingOption { get; set; } = new ChatChooserOption("Настройки");
-
-        private ObservableCollection<ChatChooserOption> _chats; 
-        public ObservableCollection<ChatChooserOption> Chats {
-            get
-            {
-                return _chats;
-            }
-            set
-            {
-                _chats = value;
-                _chats.Insert(0, SettingOption);
-            }
-        }
-
-
-
-
-
+        private ObservableCollection<ChatChooserOption> _chats;
+        public ObservableCollection<ChatChooserOption> Chats { get; set; }
 
         public ChatListViewModel(ObservableCollection<ChatChooserOption> chats)
         {
             Chats = chats;
-            CurrentIndex = 1;
+            CurrentIndex = Chats.Count > 1? 1 : 0;
         }
         public ChatListViewModel()
         {
             Chats = new ObservableCollection<ChatChooserOption>();
-            /*
-            {
-                new ChatChooserOption(){Name = "Чатикс"},
-                new ChatChooserOption(){Name = "Чатикс1"},
-                new ChatChooserOption(){Name = "Чатикс2"}
-            };
-            */
             CurrentIndex = 0;
         }
-        
     }
 }

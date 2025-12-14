@@ -77,11 +77,16 @@ public class TcpChatService
             try
             {
                 request = JsonConvert.DeserializeObject<Request>(data);
+                Console.WriteLine($"{request.Username}, {request.Password}");
             }
             catch (JsonException)
             {
                 await SendJsonResponse(stream, new Response { Success = false, Message = "Неверный формат JSON." });
                 continue;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
             }
 
             if (request == null)

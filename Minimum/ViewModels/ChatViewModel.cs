@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using DynamicData;
+using Avalonia.Media.Imaging;
 using Minimum.Models;
 using Minimum.Views;
 using ReactiveUI.Fody.Helpers;
@@ -41,6 +42,9 @@ namespace Minimum.ViewModels
 
 
 
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
         public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>()
         {
             new Message{Text = "Сообщени", Author = new User(), Time = DateTime.Now},
@@ -49,5 +53,15 @@ namespace Minimum.ViewModels
             new Message{Text = "Сообщени3", Author = new User(), Time = DateTime.Now},
             new Message{Text = "Сообщени5", Author = new User(), Time = DateTime.Now}
         };
+
+        public ChatViewModel(Chat chat)
+        {
+            Messages.AddRange(chat.Messages);
+            Users.AddRange(chat.Users);
+            Id = chat.Id;
+            Name = chat.Name;
+        }
+
+        public void AddMessage(Message msg) => Messages.Add(msg);
     }
 }

@@ -17,12 +17,12 @@
             <ColumnDefinition MinWidth="300"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <views:ChatListView Grid.Column="0" Margin="3"></views:ChatListView>
+        <views:ChatListView x:Name="ChatList" Grid.Column="0" Margin="3"></views:ChatListView>
 
         <GridSplitter Grid.Column="1"></GridSplitter>
 
-        <Border Grid.Column="2" BorderThickness="1" Margin="3">
-            <views:ChatView></views:ChatView>
+        <Border x:Name="SelectionContainer" Grid.Column="2" Margin="3">
+            <!--<views:ChatView></views:ChatView>-->
         </Border>
     </Grid>
 </Window>

@@ -33,7 +33,7 @@ namespace Minimum.ViewModels
         {
             Messages.AddRange(chat.Messages);
             Users.AddRange(chat.Users);
-            Id = $"{chat.Id}";
+            Id = chat.Id;
             Name = chat.Name;
             Assigned_ChatHeaderViewModel = new ChatHeaderViewModel();
             Assigned_ChatHeaderViewModel.SetPictureDelegateHolder = SetBackgroundPicture;
@@ -52,10 +52,7 @@ namespace Minimum.ViewModels
         {
             try
             {
-
-
                 var topLevel = TopLevel.GetTopLevel(new MainWindow());
-
 
                 var image = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
                 {
@@ -70,7 +67,6 @@ namespace Minimum.ViewModels
                     }
                 });
                 string filePath = (image[0].TryGetLocalPath());
-
 
                 string FileContent = File.ReadAllText(filePath);
 
@@ -89,9 +85,6 @@ namespace Minimum.ViewModels
                 }
 
                 App.ServiceProvider.GetRequiredService<ServerConnectionManager>().UploadFileChunk(FileId, UTF8Encoding.UTF8.GetBytes(FileContent), true);
-
-
-
             }
             catch { }
         }
@@ -116,7 +109,7 @@ namespace Minimum.ViewModels
 
 
 
-        public string Id { get; set; } = string.Empty;
+        public int Id { get; set; }
         public string Name { get; set; }
         public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
         public ObservableCollection<Chat> Chats { get; } = new ObservableCollection<Chat>();
@@ -133,13 +126,12 @@ namespace Minimum.ViewModels
         {
             Messages.AddRange(chat.Messages);
             Users.AddRange(chat.Users);
-            Id = chat.Id.ToString();
+            Id = chat.Id;
             Name = chat.Name;
             _cache = cacheService;
 
             _ = LoadCachedMessagesAsync(chat.Id);
         }
-
 
         
 

@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using Minimum.Models;
+using Minimum.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -28,7 +29,7 @@ namespace Minimum.Services
             ServerEndPoint = new IPEndPoint(IPAddress.Any, 31584);
 
             _cacheService = cacheService;
-            StartConnection();
+            _ = StartConnection();
         }
 
 
@@ -368,6 +369,67 @@ namespace Minimum.Services
             if (!string.IsNullOrWhiteSpace(cachedToken))
             {
                 Token = cachedToken;
+            }
+        }
+
+
+
+        public async Task StartListeningAsync(ChatViewModel chatVm)
+        {
+            var stream = client.GetStream();
+            var buffer = new byte[4096];
+            var sb = new StringBuilder();
+
+            while (true)
+            {
+                int bytesRead;
+                try
+                {
+                    bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                }
+                catch
+                {
+                    break;
+                }
+
+                if (bytesRead <= 0) break;
+
+                sb.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+
+                while (sb.ToString().Contains("\n"))
+                {
+                    var full = sb.ToString();
+                    var idx = full.IndexOf('\n');
+                    var jsonLine = full.Substring(0, idx).Trim();
+                    sb.Remove(0, idx + 1);
+
+                    if (string.IsNullOrWhiteSpace(jsonLine)) continue;
+
+                    try
+                    {
+                        var dto = JsonSerializer.Deserialize<BroadcastMessage>(jsonLine);
+                        if (dto != null && dto.type == "message_broadcast")
+                        {
+                            var msg = new Minimum.Models.Message
+                            {
+                                Id = dto.id,
+                                Text = dto.text,
+                                Time = dto.time,
+                                IsFile = dto.isFile,
+                                FileName = dto.fileName,
+                                FileId = dto.fileId,
+                                IsUploaded = dto.isUploaded,
+                                Author = new Minimum.Models.User { Name = dto.author }
+                            };
+
+                            await chatVm.AppendMessageAndCacheAsync(chatVm.Id, msg);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Ошибка парсинга: " + ex.Message);
+                    }
+                }
             }
         }
     }

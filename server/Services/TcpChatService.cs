@@ -15,6 +15,7 @@ public class TcpChatService
     private readonly IChatRepository _chatRepository;
     private readonly IMessageRepository _messageRepository;
     private readonly string _uploadDir = "./uploads";
+    private readonly string _avatarDit = "./avatars";
 
     private readonly Dictionary<string, Func<Request, NetworkStream, TcpClient, Task<Response>>> _handlers;
 
@@ -43,6 +44,7 @@ public class TcpChatService
             ["get_user_chats"] = (req, s, c) => new GetUserChatsHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["get_chat_messages"] = (req, s, c) => new GetChatMessagesHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["leave_chat"] = (req, s, c) => new LeaveChatHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
+            ["update_user"] = (req, s, c) => new UpdateUserProfileHandler(_userRepository, _chatRepository, _messageRepository, _avatarDir).HandleAsync(req, s, c),
         };
     }
 

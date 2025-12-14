@@ -18,6 +18,11 @@ namespace Minimum.Models
             Name = "Настройки";
             AssignedUserControl = settingsView;
         }
+        public ChatChooserOption(View.CreateChatView settingsView)
+        {
+            Name = "Создать чат";
+            AssignedUserControl = settingsView;
+        }
         public ChatChooserOption(ChatView chatView)
         {
             Name = (chatView.DataContext as ChatViewModel).Name;

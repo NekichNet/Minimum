@@ -37,7 +37,7 @@ namespace Minimum.ViewModels
                 _currentIndex = value;
                 if (OnChoosingOption != null)
                 {
-                    OnChoosingOption.Invoke(_chats[_currentIndex]);  // При присвоенном OnChoosingOption вызывает его после изменения выбранного элемента
+                    OnChoosingOption.Invoke(Chats[_currentIndex]);  // При присвоенном OnChoosingOption вызывает его после изменения выбранного элемента
                 }
             }
         }

@@ -30,7 +30,7 @@
                 <iconPacks:PackIconMaterial Kind="DotsVertical"></iconPacks:PackIconMaterial>
                 <Button.Flyout>
                     <MenuFlyout>
-                        <MenuItem Header="{Binding Text_ChangeChatBGButton}" />
+                        <MenuItem Command="{Binding Click_ChangeBGPicture}" Header="{Binding Text_ChangeChatBGButton}" />
                         <MenuItem Header="{Binding Text_QuitChatButton}" />
                         <MenuItem Header="{Binding Text_DeleteChatButton}" />
                         <!--

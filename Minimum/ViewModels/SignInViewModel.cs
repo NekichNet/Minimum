@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Minimum.ViewModels
 {
-    public class SignInViewModel
+    public class SignInViewModel : ViewModelBase
     {
         public string Input_Login { get; set; } = string.Empty;
         public string Text_LoginWatermark { get; set; } = "Введите логин";

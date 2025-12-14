@@ -11,6 +11,9 @@
 			 x:Class="Minimum.Views.ChatView" x:DataType="vm:ChatViewModel">
 	<UserControl.Resources>
 		<converters:DateToStringConverter x:Key="DTS"/>
+		<converters:IdToBackgroundConverter x:Key="IdTBG"/>
+		<converters:IdToForegroundConverter x:Key="IdTFG"/>
+		<converters:IdToPlaceConverter x:Key="IdTP"/>
 
 		
 	</UserControl.Resources>
@@ -44,7 +47,7 @@
 							<Border  Margin="5,0,5,0" MaxWidth="40" MaxHeight="40" VerticalAlignment="Center" HorizontalAlignment="Center" CornerRadius="50" ClipToBounds="True" Padding="-3">
 									<Image Source="{Binding Author.Avatar}"></Image> <!-- имаге для групповых чатов -->
 							</Border>
-						<Border Grid.Column="1" Margin="3" Padding="5" CornerRadius="10" Background="Gray" HorizontalAlignment="Left">
+						<Border Grid.Column="1" Margin="3" Padding="5" CornerRadius="10" Background="{Binding Author, Converter={StaticResource IdTBG}}" HorizontalAlignment="{Binding Author, Converter={StaticResource IdTP}}">
 							<Grid>
 								
 								<Grid.ColumnDefinitions>

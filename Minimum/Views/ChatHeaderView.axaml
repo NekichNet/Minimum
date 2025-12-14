@@ -31,9 +31,9 @@
                 <Button.Flyout>
                     <MenuFlyout>
                         <MenuItem Command="{Binding Click_ChangeBGPicture}" Header="{Binding Text_ChangeChatBGButton}" />
-                        <MenuItem Header="{Binding Text_QuitChatButton}" />
-                        <MenuItem Header="{Binding Text_DeleteChatButton}" />
-                        <MenuItem Header="{Binding ChatData.Id}" />
+                        <MenuItem Header="{Binding Text_QuitChatButton}" Command="{Binding Click_LeaveChat}" />
+                        <MenuItem Header="{Binding Text_DeleteChatButton}" Command="{Binding Click_DeleteChat}" />
+                        <MenuItem Header="{Binding ChatData.Id}" Command="{Binding Click_CopyId}" />
                         <!--
                         <Separator />
                         <MenuItem Header="Настройки">

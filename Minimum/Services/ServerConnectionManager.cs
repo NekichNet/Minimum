@@ -198,6 +198,7 @@ namespace Minimum.Services
                 Type = "send_message",
                 MessageText = message,
                 ChatId = chatId,
+                
                 Token = Token
             };
             return await SendRequest(req);

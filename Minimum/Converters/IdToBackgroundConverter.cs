@@ -17,7 +17,7 @@ namespace Minimum.Converters
         {
             if (value != null)
             {
-                return (value as User).Id != App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser.Id ? "Gray" : "LightBlue";
+                return (value as User).Id != App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser.Id ? "Gray" : "Blue";
             }
             return "Red";
         }

@@ -11,6 +11,6 @@ public partial class ChatView : UserControl
     public ChatView(Chat chat)
     {
         InitializeComponent();
-        DataContext = new ChatViewModel(chat);
+        DataContext = new ChatViewModel(chat, this);
     }
 }

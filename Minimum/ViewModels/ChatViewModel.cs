@@ -29,12 +29,23 @@ namespace Minimum.ViewModels
         private CacheService _cache;
         private const int KeepLastMessages = 50;
 
-        public ChatViewModel()
+        public ChatViewModel(Chat chat, ChatView parent)
         {
+            Messages.AddRange(chat.Messages);
+            Users.AddRange(chat.Users);
+            Id = $"{chat.Id}";
+            Name = chat.Name;
             Assigned_ChatHeaderViewModel = new ChatHeaderViewModel();
             Assigned_ChatHeaderViewModel.SetPictureDelegateHolder = SetBackgroundPicture;
             Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFile);
             _cache = new CacheService();
+
+            ChatHeaderView chatHeader = new ChatHeaderView();
+            ChatHeaderViewModel chatHeaderModel = new ChatHeaderViewModel();
+            chatHeaderModel.ChatData = chat;
+            chatHeader.DataContext = chatHeaderModel;
+
+            (parent as ChatView).ChatHeaderContainer.Child = chatHeader;
         }
 
         public async Task AttachFile()
@@ -105,7 +116,7 @@ namespace Minimum.ViewModels
 
 
 
-        public int Id { get; set; }
+        public string Id { get; set; } = string.Empty;
         public string Name { get; set; }
         public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
         public ObservableCollection<Chat> Chats { get; } = new ObservableCollection<Chat>();
@@ -118,12 +129,9 @@ namespace Minimum.ViewModels
             new Message{Text = "Сообщени5", Author = new User(), Time = DateTime.Now}
         };
 
-        public ChatViewModel(Chat chat)
+        public ChatViewModel()
         {
-            Messages.AddRange(chat.Messages);
-            Users.AddRange(chat.Users);
-            Id = chat.Id;
-            Name = chat.Name;
+            
         }
 
 

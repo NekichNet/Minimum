@@ -1,4 +1,6 @@
 ﻿using Avalonia.Controls;
+using Minimum.ViewModels;
+using Minimum.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,13 +17,10 @@ namespace Minimum.Models
         {
             Name = name;
         }
-        public ChatChooserOption()
+        public ChatChooserOption(ChatView chatView)
         {
-            Name = "";
-        }
-        public ChatChooserOption(Chat chat)
-        {
-            Name = chat.Name;
+            Name = (chatView.DataContext as ChatViewModel).Name;
+            AssignedUserControl = chatView;
         }
     }
 }

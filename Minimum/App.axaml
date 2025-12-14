@@ -17,6 +17,9 @@
 			<Setter Property="BorderBrush" Value="{DynamicResource Accent1}"></Setter>
 			<Setter Property="Foreground" Value="{DynamicResource AccentForeground}"></Setter>
 		</Style>
+		<Style Selector="TextBlock.Message">
+			<Setter Property="Foreground" Value="{DynamicResource AccentForeground}"></Setter>
+		</Style>
 		<Style Selector="ComboBox">
 			<Setter Property="Background" Value="{DynamicResource Accent2}"></Setter>
 			<Setter Property="BorderBrush" Value="{DynamicResource Accent1}"></Setter>
@@ -27,6 +30,11 @@
 			<Setter Property="BorderBrush" Value="{DynamicResource Accent1}"></Setter>
 		</Style>
 	</Application.Styles>
+	<Application.Resources>
+		<Color x:Key="Accent1">LightBlue</Color>
+		<Color x:Key="Accent2">#8AACB8</Color>
+		<Color x:Key="AccentForeground">White</Color>
+	</Application.Resources>
 	<Application.DataTemplates>
 		<local:ViewLocator/>
 	</Application.DataTemplates>

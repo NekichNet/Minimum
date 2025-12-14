@@ -74,8 +74,8 @@
 											<RowDefinition></RowDefinition>
 											<RowDefinition Height="auto"></RowDefinition>
 										</Grid.RowDefinitions>
-										<TextBlock FontSize="15" TextWrapping="Wrap" Text="{Binding Text}"></TextBlock>
-										<TextBlock Grid.Row="1" FontSize="10" HorizontalAlignment="Right" Text="{Binding Time, Converter={StaticResource DTS}}"></TextBlock>
+										<TextBlock FontSize="15" TextWrapping="Wrap" Text="{Binding Text}" Classes="Message"></TextBlock>
+										<TextBlock Grid.Row="1" FontSize="10" HorizontalAlignment="Right" Text="{Binding Time, Converter={StaticResource DTS}}" Classes="Message"></TextBlock>
 									</Grid>
 								</Grid>
 							</Border>

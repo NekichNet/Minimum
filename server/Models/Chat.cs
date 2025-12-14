@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Net.Sockets;
 using System.Text.Json.Serialization;
 
 namespace server.Models;
@@ -13,5 +14,7 @@ public class Chat
     [JsonIgnore]
     public List<Message> Messages { get; set; } = new List<Message>();
 
+    [JsonIgnore]
+    [NotMapped]
     public List<TcpClient> ConnectedClients { get; set; } = new List<TcpClient>();
 }

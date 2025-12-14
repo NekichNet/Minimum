@@ -8,6 +8,7 @@ namespace server.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Chat> Chats { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<AuthToken> AuthTokens { get; set; }
 
 
         public AppDbContext(DbContextOptions<AppDbContext> options) 
@@ -31,6 +32,11 @@ namespace server.Data
                 .HasMany(u => u.Chats)
                 .WithMany(c => c.Users)
                 .UsingEntity(j => j.ToTable("UserChats"));
+
+            modelBuilder.Entity<AuthToken>()
+                .HasOne(at => at.User)
+                .WithMany(u => u.AuthTokens)
+                .HasForeignKey(at => at.UserId);
 
             base.OnModelCreating(modelBuilder);
         }

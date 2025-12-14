@@ -10,4 +10,9 @@ public interface IUserRepository
     Task UpdateUserAsync(User user);
     Task<User?> GetUserByNameAsync(string name);
     Task<IEnumerable<User>> GetAllUsers();
+
+
+    Task AddTokenAsync(AuthToken token);
+    Task<AuthToken?> GetTokenByValueAsync(string token);
+    Task DeleteTokenAsync(string token);
 }

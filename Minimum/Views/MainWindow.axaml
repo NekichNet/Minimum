@@ -5,11 +5,25 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:views="using:Minimum.Views"
         mc:Ignorable="d"
-        Width="500" MinWidth="300"
-        Height="600" MinHeight="200"
+        Width="500" MinWidth="500"
+        Height="600" MinHeight="500"
         x:Class="Minimum.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="Minimum">
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition MinWidth="80"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+            <ColumnDefinition MinWidth="300"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
 
-    <views:ChatView />
+    <views:MainView />
+        <views:ChatListView x:Name="ChatList" Grid.Column="0" Margin="3"></views:ChatListView>
+
+        <GridSplitter Grid.Column="1"></GridSplitter>
+
+        <Border Grid.Column="2" BorderThickness="1" Margin="3">
+            <views:ChatView></views:ChatView>
+        </Border>
+    </Grid>
 </Window>

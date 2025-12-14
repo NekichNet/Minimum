@@ -3,8 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Minimum.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Minimum.ChatListView" x:DataType="vm:ChatListViewModel">
+             mc:Ignorable="d"
+             x:Class="Minimum.Views.ChatListView" x:DataType="vm:ChatListViewModel">
   
     <Grid>
 		<ListBox SelectedIndex="{Binding CurrentIndex}"  ItemsSource="{Binding Chats}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -13,10 +13,10 @@
 					<Grid HorizontalAlignment="Stretch">
                         <TextBlock Text="{Binding Name}"></TextBlock>
 
-                        <Button Content="{Binding Name}" 
+                        <!--<Button Content="{Binding Name}" 
                                 IsVisible="{Binding IsSettings}" 
                                 HorizontalAlignment="Stretch"
-                                Command="{Binding DataContext.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" />
+                                Command="{Binding DataContext.OpenSettingsCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" />-->
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

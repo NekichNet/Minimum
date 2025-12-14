@@ -93,7 +93,10 @@ namespace Minimum.ViewModels
                 using var stream = File.OpenRead(imagePath);
                 Avatar = Bitmap.DecodeToHeight(stream, 800, BitmapInterpolationMode.HighQuality);
 
+
+
                 App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser.Avatar = Avatar;
+                App.ServiceProvider.GetRequiredService<ServerConnectionManager>().UpdateUser(App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser);
             }
             catch (Exception ex)
             {

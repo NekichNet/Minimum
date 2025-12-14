@@ -83,6 +83,22 @@ namespace Minimum.Services
             }
         }
 
+
+
+        public async Task<Response> UpdateUser(User user)
+        {
+            /*
+            var req = new Request()
+            {
+                Type = "update_user",
+                Username = user.Name,
+                Password = user.Password,
+            };
+            return await SendRequest(req);
+            */
+            return new Response();
+        }
+
         public async Task<Response> SignUp(string login, string password)
         {
             var req = new Request()
@@ -158,7 +174,7 @@ namespace Minimum.Services
                 Type = "download_file",
                 FileId = fileId
             };
-            return await SendRequest(req); // фывфыв
+            return await SendRequest(req); // фывфыв sosiskakiller
         }
 
 

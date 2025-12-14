@@ -45,7 +45,7 @@
 								<ColumnDefinition></ColumnDefinition>
 							</Grid.ColumnDefinitions>
 							<Border  Margin="5,0,5,0" MaxWidth="40" MaxHeight="40" VerticalAlignment="Center" HorizontalAlignment="Center" CornerRadius="50" ClipToBounds="True" Padding="-3">
-									<Image Source="{Binding Author.Avatar}"></Image> <!-- имаге для групповых чатов -->
+									<Image Source="{Binding Author.Avatar}"></Image>
 							</Border>
 						<Border Grid.Column="1" Margin="3" Padding="5" CornerRadius="10" Background="{Binding Author, Converter={StaticResource IdTBG}}" HorizontalAlignment="{Binding Author, Converter={StaticResource IdTP}}">
 							<Grid>
@@ -82,7 +82,7 @@
 				</Grid.ColumnDefinitions>
 
 				<TextBox Name="InputTextBox" Grid.Column="0" Margin="3 0 3 1.5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"></TextBox>
-				<Button Name="AttachFileButton" Grid.Column="1" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+				<Button Command="{Binding Click_AttachFile}" Name="AttachFileButton" Grid.Column="1" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 					<iconPacks:PackIconMaterial Kind="AttachmentPlus"></iconPacks:PackIconMaterial>
 				</Button>
 				<Button Name="SendButton" Grid.Column="2" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">

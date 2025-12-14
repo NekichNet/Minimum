@@ -19,14 +19,5 @@ public partial class ChatView : UserControl
 
         InitializeComponent();
         DataContext = chatVm;
-
-        _ = InitConnection(chatVm);
-    }
-
-
-    private async Task InitConnection(ChatViewModel chatVm)
-    {
-        await _scm.StartConnection();
-        _ = _scm.StartListeningAsync(chatVm);
     }
 }

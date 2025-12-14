@@ -61,4 +61,15 @@ public class MessageRepository : IMessageRepository
             .Include(m => m.Author)
             .ToListAsync();
     }
+
+    public async Task<IEnumerable<Message>> GetMessagesWithPaginationAsync(int chatId, int limit, int offset)
+    {
+        return await _db.Messages
+            .Where(m => m.ChatId == chatId)
+            .OrderBy(m => m.Time)
+            .Skip(offset)
+            .Take(limit)
+            .Include(m => m.Author)
+            .ToListAsync();
+    }
 }

@@ -31,11 +31,14 @@ public class JoinChatHandler : CommandHandler
             return new Response { Success = false, Message = "Чат не найден." };
         }
 
-        if (!chat.Users.Contains(user))
+        if (chat.Users.Contains(user))
         {
-            return new Response { Success = false, Message = "Пользователь не состоит в этом чате." };
+            return new Response { Success = true, Message = "Пользователь уже состоит в чате.", ChatId = chat.Id };
         }
 
-        return new Response { Success = true, Message = "Вы присоединились к чату." };
+        chat.Users.Add(user);
+        await ChatRepository.UpdateChatAsync(chat);
+
+        return new Response { Success = true, Message = chat.Name, ChatId = chat.Id };
     }
 }

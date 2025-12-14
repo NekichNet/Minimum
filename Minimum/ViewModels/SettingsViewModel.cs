@@ -66,7 +66,7 @@ namespace Minimum.ViewModels
         {
             QuitCommand = ReactiveCommand.CreateFromTask(async () =>
             {
-                await _scm.SignOut();
+                await App.ServiceProvider.GetRequiredService<ServerConnectionManager>().SignOut();
 
                 if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
                 {

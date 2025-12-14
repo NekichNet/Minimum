@@ -29,7 +29,7 @@ namespace Minimum.Services
             ServerEndPoint = new IPEndPoint(IPAddress.Any, 31584);
 
             _cacheService = cacheService;
-            StartConnection();
+            _ = StartConnection();
         }
 
 

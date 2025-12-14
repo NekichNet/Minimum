@@ -50,6 +50,5 @@
 
   <ItemGroup>
     <Folder Include="Repositories\Interfaces\" />
-    <Folder Include="Converters\" />
   </ItemGroup>
 </Project>

@@ -1,8 +1,8 @@
-﻿using Minimum.Models;
+﻿using Avalonia.Media.Imaging;
+using Minimum.Models;
 using Minimum.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -26,9 +26,10 @@ namespace Minimum.Services
         public ServerConnectionManager(CacheService cacheService)
         {
             client = new TcpClient();
-            ServerEndPoint = new IPEndPoint(IPAddress.Any, 8080);
+            ServerEndPoint = new IPEndPoint(IPAddress.Any, 31584);
 
             _cacheService = cacheService;
+            StartConnection();
         }
 
 
@@ -37,7 +38,7 @@ namespace Minimum.Services
         {
             if (!client.Connected)
             {
-                await client.ConnectAsync("127.0.0.1", 8080);
+                await client.ConnectAsync("127.0.0.1", 31584);
                 await RestoreTokenAsync();
             }
             else
@@ -99,6 +100,30 @@ namespace Minimum.Services
             {
                 return new Response { Success = false, Message = $"Не JSON: {ex.Message}" };
             }
+        }
+
+
+
+        public async Task<Response> UpdateUser(User user)
+        {
+            byte[] bytes;
+            using (var ms = new MemoryStream())
+            {
+                // Save the bitmap to the stream in a specific format
+                user.Avatar.Save(ms); // Default format is usually PNG or matches the source
+                bytes =  ms.ToArray();
+            }
+
+
+
+            var req = new Request()
+            {
+                Type = "update_user",
+                Username = user.Name,
+                Password = user.Password,
+                AvatarData = bytes
+            };
+            return await SendRequest(req);
         }
 
 
@@ -319,7 +344,16 @@ namespace Minimum.Services
             return await SendRequest(req);
         }
 
+        public async Task<Response> CheckToken(string token)
+        {
+            var req = new Request()
+            {
+                Type = "validate_token",
+                Token = token
+            };
 
+            return await SendRequest(req);
+        }
 
         private async Task CacheChatIfNeeded(Response resp)
         {
@@ -328,7 +362,6 @@ namespace Minimum.Services
                 await _cacheService.SaveChatsAsync(new[] { resp.Chat });
             }
         }
-
 
         public async Task RestoreTokenAsync()
         {

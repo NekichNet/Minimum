@@ -1,4 +1,5 @@
-﻿using Minimum.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Minimum.Services;
 using Minimum.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -11,9 +12,10 @@ using System.Threading.Tasks;
 
 namespace Minimum.ViewModels
 {
-    public class SignInViewModel
+    public class SignInViewModel : ViewModelBase
     {
         public event Action<string>? Authenticated;
+        private readonly SignInUpView _signInUpView;
 
         public string Input_Login { get; set; } = string.Empty;
         public string Text_LoginWatermark { get; set; } = "Введите логин";
@@ -28,8 +30,10 @@ namespace Minimum.ViewModels
         public ReactiveCommand<Unit, Unit> Click_SignIn { get; }
         public ReactiveCommand<Unit, Unit> Click_GoToSignUp { get; }
 
-        public SignInViewModel()
+        public SignInViewModel(SignInUpView signInUpView)
         {
+            CheckToken();
+            _signInUpView = signInUpView;
             Bool_RevealPassword = false;
             Text_PasswordChar = '•';
             Click_RevealPassword = ReactiveCommand.Create(RevealPassword);
@@ -59,7 +63,7 @@ namespace Minimum.ViewModels
         private async Task GoToSignUp()
         {
             var nav = new NavigationService();
-            nav.NavigateTo<SignUpView>();
+            _signInUpView.ShowSignUpView();
             await Task.CompletedTask;
         }
 
@@ -70,7 +74,7 @@ namespace Minimum.ViewModels
             {
                 var cacheService = new CacheService();
                 var scm = new Services.ServerConnectionManager(cacheService);
-                await scm.StartConnection();
+                //await scm.StartConnection();
                 var resp = await scm.SignIn(Input_Login, Input_Password);
 
                 if (resp != null && resp.Success)
@@ -79,9 +83,7 @@ namespace Minimum.ViewModels
                     {
                         Authenticated?.Invoke(resp.Token);
 
-
-                        var nav = new NavigationService();
-                        nav.NavigateTo<ChatView>();
+                        await AutoLogin();
                     }
                 }
                 else
@@ -93,6 +95,30 @@ namespace Minimum.ViewModels
             {
                 // логика обработки ошибок
             }
+        }
+
+        private async Task CheckToken()
+        {
+            var token = await App.ServiceProvider.GetRequiredService<CacheService>().LoadTokenAsync();
+
+            if (!string.IsNullOrEmpty(token))
+            {
+                var con = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
+                var res = await con.CheckToken(token);
+
+                if (res.Success == true)
+                {
+                    await AutoLogin();
+                }
+            }
+        }
+
+        private async Task AutoLogin()
+        {
+            var win = new MainWindow();
+            win.Show();
+
+            _signInUpView.Close();
         }
     }
 }

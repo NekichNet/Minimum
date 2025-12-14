@@ -7,10 +7,10 @@ namespace Minimum;
 
 public partial class SignInView : UserControl
 {
-    public SignInView()
+    public SignInView(SignInUpView signInUpView)
     {
         InitializeComponent();
-        DataContext = new SignInViewModel();
+        DataContext = new SignInViewModel(signInUpView);
     }
 
     public SignInViewModel? ViewModel => DataContext as SignInViewModel;

@@ -12,6 +12,7 @@ namespace Minimum.ViewModels
 {
     public class SignUpViewModel : ViewModelBase
     {
+        private readonly SignInUpView _signInUpView;
         public event Action<string>? Authenticated;
 
         public string Input_Login { get; set; } = string.Empty;
@@ -31,8 +32,10 @@ namespace Minimum.ViewModels
 
 
 
-        public SignUpViewModel()
+        public SignUpViewModel(SignInUpView signInUpView)
         {
+            _signInUpView = signInUpView;
+
             Click_SignUp = ReactiveCommand.CreateFromTask(TrySignUp);
             Click_GoToSignIn = ReactiveCommand.CreateFromTask(GoToSignIn);
         }
@@ -43,7 +46,7 @@ namespace Minimum.ViewModels
         {
             var cacheService = new CacheService();
             var req = new ServerConnectionManager(cacheService);
-            await req.StartConnection();
+            //await req.StartConnection();
             var resp = await req.SignUp(Input_Login, Input_Password);
 
             if (resp != null && resp.Success)
@@ -63,7 +66,8 @@ namespace Minimum.ViewModels
         private async Task GoToSignIn()
         {
             var nav = new NavigationService();
-            nav.NavigateTo<SignInView>();
+            _signInUpView.ShowSignInView();
+            //nav.NavigateTo<SignInView>();
             await Task.CompletedTask;
         }
     }

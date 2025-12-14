@@ -16,6 +16,8 @@ namespace Minimum.Models
 
         public Chat? Chat { get; set; }
 
-        public List<string> Chats { get; set; }
+        public List<string> Chats { get; set; } = new List<string>();
+
+        public object Data { get; set; } = null!;
     }
 }

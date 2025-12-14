@@ -1,29 +1,36 @@
-﻿using Avalonia;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform.Storage;
+using Microsoft.Extensions.DependencyInjection;
 using Minimum.Models;
 using Minimum.Services;
 using Minimum.View;
+using Minimum.Views;
 using ReactiveUI;
+using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reactive;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 using Color = Avalonia.Media.Color;
 
 namespace Minimum.ViewModels
 {
-    public class SettingsViewModel
+    public class SettingsViewModel : ViewModelBase
     {
         private SettingsView _settingsView;
         private Avalonia.Styling.ThemeVariant _theme;
         private readonly CacheService _cacheService;
+        private readonly ServerConnectionManager _scm;
 
         public string Name { get; set; } = "Настройки";
         public string UsernameTag { get; set; } = "Имя пользователя:";
@@ -31,10 +38,93 @@ namespace Minimum.ViewModels
         public string LoadAvatarTag { get; set; } = "Загрузить аватар";
         public string ColorTag { get; set; } = "Акцентный цвет:";
         public string UpdateColorTag { get; set; } = "Сохранить цвет";
+
         public string QuitTag { get; set; } = "Выйти из аккаунта";
+        public ReactiveCommand<Unit, Unit> QuitCommand { get; private set; }
+
         public string Username { get; set; } = string.Empty;
+        [Reactive] public Bitmap? Avatar { get; set; }
+
+
+        public ReactiveCommand<Unit, Unit> Click_UploadPFP { get; set; }
+        public ReactiveCommand<Unit, Unit> Click_LogOff { get; set; }
+
+        public SettingsViewModel(SettingsView settingsView)
+        {
+            _settingsView = settingsView;
+            _cacheService = App.ServiceProvider.GetRequiredService<CacheService>();
+            UpdateAccent = ReactiveCommand.Create(UpdateAccentColor);
+            UpdateAccentColor();
+
+            _ = LoadSettings();
+
+            LogOff();
+        }
+
+
+        public async Task LogOff()
+        {
+            QuitCommand = ReactiveCommand.CreateFromTask(async () =>
+            {
+                await _scm.SignOut();
+
+                if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    desktop.Shutdown();
+                }
+            });
+        }
+
+
+        public async Task UploadPFP()
+        {
+            try
+            {
+                var topLevel = TopLevel.GetTopLevel(new MainWindow());
+
+                var image = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                {
+                    Title = "Выберите изображение",
+                    AllowMultiple = false,
+                    FileTypeFilter = new[]
+                        {
+                        new FilePickerFileType("Изображение")
+                        {
+                            Patterns = new[] { "*.png", "*.jpg", "*.jpeg", "*.bmp", "*.webp" },
+                            MimeTypes = new[] { "image/*" }
+                        }
+                    }
+                });
+                string imagePath = (image[0].TryGetLocalPath());
+
+                SetPFP(imagePath);
+
+
+            }
+            catch { }
+
+
+
+        }
+        private void SetPFP(string imagePath)
+        {
+            try
+            {
+                using var stream = File.OpenRead(imagePath);
+                Avatar = Bitmap.DecodeToHeight(stream, 800, BitmapInterpolationMode.HighQuality);
+
+
+
+                App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser.Avatar = Avatar;
+                App.ServiceProvider.GetRequiredService<ServerConnectionManager>().UpdateUser(App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser);
+            }
+            catch (Exception ex)
+            {
+                Avatar = null;
+            }
+        }
+
         public string ThemeTag { get; set; } = "Тема приложения:";
-        public Bitmap Avatar { get; set; }
         public Avalonia.Styling.ThemeVariant Theme
         {
             get { return _theme; }

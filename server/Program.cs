@@ -44,6 +44,12 @@ internal class Program
 
         var host = builder.Build();
 
+        using (var scope = host.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            context.Database.Migrate();
+        }
+
         // вот тут сервер запускается
         var server = host.Services.GetRequiredService<TcpChatService>();
         _ = Task.Run(() => server.Start());

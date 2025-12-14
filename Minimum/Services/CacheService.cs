@@ -16,6 +16,7 @@ namespace Minimum.Services
         private readonly string _messagesDir;
         private readonly string _filesDir;
         private readonly string _avatarsDir;
+        private readonly string _settingsFile;
         private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions { WriteIndented = true };
 
         public CacheService(string? root = null) 
@@ -25,6 +26,7 @@ namespace Minimum.Services
             _messagesDir = Path.Combine(_root, "messages");
             _filesDir = Path.Combine(_root, "files");
             _avatarsDir = Path.Combine(_root, "avatars");
+            _settingsFile = Path.Combine(_root, "settings.json");
 
             Directory.CreateDirectory(_root);
             Directory.CreateDirectory(_messagesDir);
@@ -117,5 +119,22 @@ namespace Minimum.Services
             return File.Exists(path) ? path : null;
         }
 
+
+
+        // User Settings
+        public async Task SaveSettingsAsync(UserSettings settings)
+        {
+            var json = JsonSerializer.Serialize(settings, _jsonOptions);
+            await File.WriteAllTextAsync(_settingsFile, json);
+        }
+
+        public async Task<UserSettings> LoadSettingsAsync()
+        {
+            if (!File.Exists(_settingsFile))
+                return new UserSettings();
+
+            var json = await File.ReadAllTextAsync(_settingsFile);
+            return JsonSerializer.Deserialize<UserSettings>(json, _jsonOptions) ?? new UserSettings();
+        }
     }
 }

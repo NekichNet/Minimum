@@ -33,7 +33,7 @@ public class JoinChatHandler : CommandHandler
 
         if (chat.Users.Contains(user))
         {
-            return new Response { Success = true, Message = "Пользователь уже состоит в чате.", ChatId = chat.Id };
+            return new Response { Success = false, Message = "Пользователь уже состоит в чате.", ChatId = chat.Id };
         }
 
         chat.Users.Add(user);

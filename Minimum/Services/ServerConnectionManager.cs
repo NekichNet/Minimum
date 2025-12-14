@@ -31,8 +31,6 @@ namespace Minimum.Services
             StartConnection();
         }
 
-
-
         public async Task StartConnection()
         {
             if (!client.Connected)

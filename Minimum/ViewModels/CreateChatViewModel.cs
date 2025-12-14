@@ -1,4 +1,8 @@
-﻿using ReactiveUI;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Minimum.Models;
+using Minimum.Services;
+using Minimum.Views;
+using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +14,8 @@ namespace Minimum.ViewModels
 {
     public class CreateChatViewModel : ViewModelBase
     {
+        public ChatListViewModel ChatListViewModel { get; set; }
+
         public ReactiveCommand<Unit, Unit> Click_CreateChat { get; set; }
         public string Text_TabJoinChat { get; set; } = "Присоедениться";
         public string Text_TabCreateChat { get; set; } = "Создать";
@@ -36,11 +42,25 @@ namespace Minimum.ViewModels
 
         public async Task CreateChat()
         {
-            // код для создания чата при нажатии кнопки
+            Response response = await App.ServiceProvider.GetRequiredService<ServerConnectionManager>().CreateChat(Input_CreateChatChatName);
+            if (response.Success)
+            {
+                Chat chat = new Chat() { Id = (int)response.ChatId, Name = Input_CreateChatChatName };
+                ChatView chatView = new ChatView(chat);
+                ChatChooserOption chatOption = new ChatChooserOption(chatView);
+                ChatListViewModel.Chats.Add(chatOption);
+            }
         }
         public async Task EnterChat()
         {
-            // код для создания чата при нажатии кнопки
+            Response response = await App.ServiceProvider.GetRequiredService<ServerConnectionManager>().CreateChat(Input_JoinChatChatName);
+            if (response.Success)
+            {
+                Chat chat = new Chat() { Id = Convert.ToInt32(Input_JoinChatChatName), Name = response.Message };
+                ChatView chatView = new ChatView(chat);
+                ChatChooserOption chatOption = new ChatChooserOption(chatView);
+                ChatListViewModel.Chats.Add(chatOption);
+            }
         }
     }
 }

@@ -166,6 +166,7 @@ namespace Minimum.Services
         {
             var req = new Request()
             {
+                Token = Token,
                 Type = "create_chat",
                 ChatName = chatName
             };

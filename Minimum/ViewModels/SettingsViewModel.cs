@@ -10,7 +10,6 @@ using Minimum.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using Minimum.View;
-using ReactiveUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,7 +37,6 @@ namespace Minimum.ViewModels
         public string QuitTag { get; set; } = "Выйти из аккаунта";
         public string Username { get; set; } = string.Empty;
         public string ThemeTag { get; set; } = "Тема приложения:";
-        public Bitmap Avatar { get; set; }
         public Avalonia.Styling.ThemeVariant Theme
         {
             get { return _theme; }

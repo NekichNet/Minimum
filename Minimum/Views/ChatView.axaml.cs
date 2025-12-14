@@ -9,8 +9,11 @@ namespace Minimum.Views;
 
 public partial class ChatView : UserControl
 {
+    public Chat Chat { get; set; }
+
     public ChatView(Chat chat)
     {
+        Chat = chat;
         InitializeComponent();
         DataContext = new ChatViewModel(chat, this);
     }

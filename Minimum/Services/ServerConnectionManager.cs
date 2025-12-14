@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
+using Microsoft.Extensions.DependencyInjection;
 using Minimum.Models;
 using System;
 using System.Collections.Generic;
@@ -181,9 +182,7 @@ namespace Minimum.Services
                 Type = "create_chat",
                 ChatName = chatName
             };
-            var resp = await SendRequest(req);
-
-            await CacheChatIfNeeded(resp);
+            Response resp = await SendRequest(req);
 
             return resp;
         }
@@ -340,7 +339,9 @@ namespace Minimum.Services
                 ChatId = chatId,
                 Token = Token
             };
-            return await SendRequest(req);
+            Response resp = await SendRequest(req);
+
+            return resp;
         }
 
         public async Task<Response> CheckToken(string token)
@@ -352,14 +353,6 @@ namespace Minimum.Services
             };
 
             return await SendRequest(req);
-        }
-
-        private async Task CacheChatIfNeeded(Response resp)
-        {
-            if (resp.Success && resp.Chat != null)
-            {
-                await _cacheService.SaveChatsAsync(new[] { resp.Chat });
-            }
         }
 
         public async Task RestoreTokenAsync()

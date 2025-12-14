@@ -49,6 +49,7 @@ namespace Minimum.ViewModels
                 ChatView chatView = new ChatView(chat);
                 ChatChooserOption chatOption = new ChatChooserOption(chatView);
                 ChatListViewModel.Chats.Add(chatOption);
+                ChatListViewModel.SaveChatsToCacheAsync();
             }
         }
         public async Task EnterChat()
@@ -60,6 +61,7 @@ namespace Minimum.ViewModels
                 ChatView chatView = new ChatView(chat);
                 ChatChooserOption chatOption = new ChatChooserOption(chatView);
                 ChatListViewModel.Chats.Add(chatOption);
+                ChatListViewModel.SaveChatsToCacheAsync();
             }
         }
     }

@@ -36,16 +36,17 @@ public class TcpChatService
             ["register"] = (req, s, c) => new RegisterHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["login"] = (req, s, c) => new LoginHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["create_chat"] = (req, s, c) => new CreateChatHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
-            ["send_message"] = (req, s, c) => new SendMessageHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir).HandleAsync(req, s, c),
+            ["send_message"] = (req, s, c) => new SendMessageHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir, chatConnectionService).HandleAsync(req, s, c),
             ["send_file_placeholder"] = (req, s, c) => new SendFilePlaceholderHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir).HandleAsync(req, s, c),
             ["upload_file_chunk"] = (req, s, c) => new UploadFileChunkHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir).HandleAsync(req, s, c),
             ["download_file"] = (req, s, c) => new DownloadFileHandler(_userRepository, _chatRepository, _messageRepository, _uploadDir).HandleAsync(req, s, c),
-            ["join_chat"] = (req, s, c) => new JoinChatHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
+            ["join_chat"] = (req, s, c) => new JoinChatHandler(_userRepository, _chatRepository, _messageRepository, chatConnectionService).HandleAsync(req, s, c),
             ["validate_token"] = (req, s, c) => new ValidateTokenHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["get_user_chats"] = (req, s, c) => new GetUserChatsHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["get_chat_messages"] = (req, s, c) => new GetChatMessagesHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["leave_chat"] = (req, s, c) => new LeaveChatHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
             ["update_user"] = (req, s, c) => new UpdateUserProfileHandler(_userRepository, _chatRepository, _messageRepository, _avatarDir).HandleAsync(req, s, c),
+            ["get_chat_users"] = (req, s, c) => new GetChatUsersHandler(_userRepository, _chatRepository, _messageRepository).HandleAsync(req, s, c),
         };
     }
 

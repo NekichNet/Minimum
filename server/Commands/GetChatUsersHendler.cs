@@ -1,23 +1,15 @@
 ﻿using Minimum.Repositories.Interfaces;
 using server.Models;
-using server.Services;
-using System.Collections.Concurrent;
 using System.Net.Sockets;
 
 namespace server.Commands;
 
-public class JoinChatHandler : CommandHandler
+public class GetChatUsersHandler : CommandHandler
 {
-    private readonly ChatConnectionService _chatConnectionService;
-
-    public JoinChatHandler(
+    public GetChatUsersHandler(
         IUserRepository userRepository,
         IChatRepository chatRepository,
-        IMessageRepository messageRepository,
-        ChatConnectionService chatConnectionService) : base(userRepository, chatRepository, messageRepository)
-    {
-        _chatConnectionService = chatConnectionService;
-    }
+        IMessageRepository messageRepository) : base(userRepository, chatRepository, messageRepository) { }
 
     public override async Task<Response> HandleAsync(Request request, NetworkStream stream, TcpClient client)
     {
@@ -38,17 +30,23 @@ public class JoinChatHandler : CommandHandler
             return new Response { Success = false, Message = "Чат не найден." };
         }
 
-        if (chat.Users.Contains(user))
+        if (!chat.Users.Contains(user))
         {
-            _chatConnectionService.AddClient(chat.Id, client);
-            return new Response { Success = true, Message = chat.Name, ChatId = chat.Id };
+            return new Response { Success = false, Message = "Пользователь не состоит в этом чате." };
         }
 
-        user.Chats.Add(chat);
-        await UserRepository.UpdateUserAsync(user);
+        var userList = chat.Users.Select(u => new
+        {
+            u.Id,
+            u.Name,
+            AvatarPath = u.AvatarPath
+        }).ToList();
 
-        _chatConnectionService.AddClient(chat.Id, client);
-
-        return new Response { Success = true, Message = chat.Name, ChatId = chat.Id };
+        return new Response
+        {
+            Success = true,
+            Message = "Пользователи чата получены.",
+            Data = userList
+        };
     }
 }

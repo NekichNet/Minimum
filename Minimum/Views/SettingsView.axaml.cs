@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 using Minimum.ViewModels;
 using System.Collections.ObjectModel;
 
-namespace Minimum;
+namespace Minimum.View;
 
 public partial class SettingsView : UserControl
 {

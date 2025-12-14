@@ -4,17 +4,24 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Minimum.Models
 {
     public class User
     {
+
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
-        public Bitmap? Avatar { get; set; } //= Bitmap.DecodeToHeight(File.OpenRead(path), 800); -- просто пример
+        public string AvatarPath { get; set; } = string.Empty;
+        public Bitmap? Avatar { get; set; } 
 
-        public ICollection<Message> Messages { get; set; } = new List<Message>();
+        [JsonIgnore]
+        public List<Message> Messages { get; set; } = new List<Message>();
+        [JsonIgnore]
+        public List<Chat> Chats { get; set; } = new List<Chat>();
+
     }
 }

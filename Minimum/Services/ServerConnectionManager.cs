@@ -1,4 +1,5 @@
-﻿using Minimum.Models;
+﻿using Avalonia.Media.Imaging;
+using Minimum.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -86,15 +87,25 @@ namespace Minimum.Services
 
         public async Task<Response> UpdateUser(User user)
         {
-            /*
+            byte[] bytes;
+            using (var ms = new MemoryStream())
+            {
+                // Save the bitmap to the stream in a specific format
+                user.Avatar.Save(ms); // Default format is usually PNG or matches the source
+                bytes =  ms.ToArray();
+            }
+
+
+
             var req = new Request()
             {
                 Type = "update_user",
                 Username = user.Name,
                 Password = user.Password,
+                AvatarData = bytes
             };
             return await SendRequest(req);
-            */
+            
             return new Response();
         }
 

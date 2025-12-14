@@ -15,7 +15,7 @@ public class TcpChatService
     private readonly IChatRepository _chatRepository;
     private readonly IMessageRepository _messageRepository;
     private readonly string _uploadDir = "./uploads";
-    private readonly string _avatarDit = "./avatars";
+    private readonly string _avatarDir = "./avatars";
 
     private readonly Dictionary<string, Func<Request, NetworkStream, TcpClient, Task<Response>>> _handlers;
 

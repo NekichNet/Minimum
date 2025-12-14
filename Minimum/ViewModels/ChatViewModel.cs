@@ -26,8 +26,11 @@ namespace Minimum.ViewModels
     {
         public ChatView Parent { get; set; }
         public ChatHeaderViewModel Assigned_ChatHeaderViewModel { get; set; }
+        public string Input_Message { get; set; }
+        public Chat ChatData { get; set; }
 
         public ReactiveCommand<Unit, Unit> Click_AttachFile { get; set; }
+        public ReactiveCommand<Unit, Unit> Click_SendMessage { get; set; }
         public ReactiveCommand<string, Unit> DownloadFileCommand { get; }
         private CacheService _cache;
         private Message msg;
@@ -36,12 +39,15 @@ namespace Minimum.ViewModels
 
         public ChatViewModel(Chat chat, ChatView parent, ServerConnectionManager scm)
         {
+            ChatData = chat;
             Messages.AddRange(chat.Messages);
             Users.AddRange(chat.Users);
             Id = chat.Id;
             Name = chat.Name;
             Assigned_ChatHeaderViewModel = new ChatHeaderViewModel();
             Assigned_ChatHeaderViewModel.SetPictureDelegateHolder = SetBackgroundPicture;
+            Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFile);
+            Click_SendMessage = ReactiveCommand.CreateFromTask(SendMessage);
             _cache = new CacheService();
 
             ChatHeaderView chatHeader = new ChatHeaderView();
@@ -51,21 +57,22 @@ namespace Minimum.ViewModels
 
 
             (parent as ChatView).ChatHeaderContainer.Child = chatHeader;
-            _scm = scm;
-
-            _ = LoadCachedMessagesAsync(chat.Id);
-            Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFileAsync);
+        }
 
 
-            msg.DownloadFileCommand = ReactiveCommand.CreateFromTask(async () =>
+        public async Task SendMessage()
+        {
+            if (!string.IsNullOrEmpty(Input_Message.Trim()))
             {
-                var destination = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), msg.FileName);
-                var resp = await _scm.DownloadFile(msg.FileId, destination, msg.FileSize);
-                if (resp.Success)
-                {
-                    // уведомление
-                }
-            });
+
+                App.ServiceProvider.GetRequiredService<ServerConnectionManager>().SendMessage(Input_Message, ChatData.Id);
+                Messages.Add(new Message() { 
+                    Author = App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser,
+                    AuthorId = App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser.Id,
+                    Text = Input_Message,
+                    Time = DateTime.Now
+                });
+            }
         }
 
 
@@ -137,11 +144,6 @@ namespace Minimum.ViewModels
         public ObservableCollection<Chat> Chats { get; } = new ObservableCollection<Chat>();
         public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>()
         {
-            new Message{Text = "Сообщени", Author = new User(), Time = DateTime.Now},
-            new Message{Text = "Сообщени1", Author = new User(), Time = DateTime.Now},
-            new Message{Text = "Сообщени2", Author = new User(), Time = DateTime.Now},
-            new Message{Text = "Сообщени3", Author = new User(), Time = DateTime.Now},
-            new Message{Text = "Сообщени5", Author = new User(), Time = DateTime.Now}
         };
 
         public ChatViewModel(Chat chat, CacheService cacheService)

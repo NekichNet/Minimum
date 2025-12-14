@@ -32,7 +32,7 @@
                   <StackPanel Margin="5" Grid.Row="1">
                       <TextBlock Text="{Binding Text_JoinChatChatName}"></TextBlock>
                       <TextBox Text="{Binding Input_JoinChatChatName}"></TextBox>
-		              <Button Content="{Binding Text_JoinChat}" Command="{Binding Click_CreateChat}"></Button>
+		              <Button Content="{Binding Text_JoinChat}" Command="{Binding Click_EnterChat}"></Button>
                   </StackPanel>
               </Grid>
           </TabItem>

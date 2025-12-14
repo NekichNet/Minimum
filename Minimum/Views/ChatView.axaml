@@ -102,11 +102,11 @@
 					<ColumnDefinition Width="auto"></ColumnDefinition>
 				</Grid.ColumnDefinitions>
 
-				<TextBox Name="InputTextBox" Grid.Column="0" Margin="3 0 3 1.5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"></TextBox>
+				<TextBox Name="InputTextBox" Text="{Binding Input_Message}" Grid.Column="0" Margin="3 0 3 1.5" HorizontalAlignment="Stretch" VerticalAlignment="Bottom"></TextBox>
 				<Button Command="{Binding Click_AttachFile}" Name="AttachFileButton" Grid.Column="1" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 					<iconPacks:PackIconMaterial Kind="AttachmentPlus"></iconPacks:PackIconMaterial>
 				</Button>
-				<Button Name="SendButton" Grid.Column="2" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+				<Button Command="{Binding Click_SendMessage}" Name="SendButton" Grid.Column="2" Margin="0.75 3 1.5 1.5" HorizontalAlignment="Center" VerticalAlignment="Bottom">
 					<iconPacks:PackIconMaterial Kind="Send"></iconPacks:PackIconMaterial>
 				</Button>
 			</Grid>

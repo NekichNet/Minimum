@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using Microsoft.Extensions.DependencyInjection;
 using Minimum.Models;
 using Minimum.Services;
 using Minimum.ViewModels;
@@ -17,12 +18,14 @@ public partial class ChatView : UserControl
 
     public ChatView(Chat chat)
     {
-        _scm = new ServerConnectionManager(_cache);
+        _scm = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
+        _cache = App.ServiceProvider.GetRequiredService<CacheService>();
+
         var chatVm = new ChatViewModel(chat, _cache, this);
 
         InitializeComponent();
         Chat = chat;
-        DataContext = new ChatViewModel(chat, this);
+        DataContext = chatVm;
 
         _ = InitConnection(chatVm);
     }

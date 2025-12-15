@@ -85,4 +85,16 @@ public partial class SignInUpView : Window
             this.Close();
         });
     }
+
+
+    public async Task LoadCachedChatsAsync()
+    {
+        var cachedChats = await _cacheService.LoadChatsAsync();
+        foreach (var chat in cachedChats)
+        {
+            /*
+            Chats.Add(new ChatViewModel(chat, _cacheService));
+            */
+        }
+    }
 }

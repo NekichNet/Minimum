@@ -13,6 +13,7 @@ public partial class App : Application
 {
     private IServiceProvider? _serviceProvider;
     public static IServiceProvider? ServiceProvider { get; private set; }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -24,6 +25,8 @@ public partial class App : Application
 
         services.AddSingleton<ServerConnectionManager>();
         services.AddSingleton<UserProviderService>();
+        services.AddSingleton<TcpClientService>();
+        services.AddSingleton<TcpListenerService>();
         services.AddTransient<CacheService>();
 
         _serviceProvider = services.BuildServiceProvider();
@@ -33,6 +36,7 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             desktop.MainWindow = new SignInUpView();
+            desktop.Exit += (object? sender, ControlledApplicationLifetimeExitEventArgs e) => { ServiceProvider.GetRequiredService<TcpClientService>().CloseConnection(); };
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {

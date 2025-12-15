@@ -27,7 +27,7 @@ namespace Minimum.ViewModels
         public string Input_Message { get; set; }
         public Chat ChatData { get; set; }
 
-        public ReactiveCommand<Unit, Unit> Click_AttachFile { get; set; }
+        // public ReactiveCommand<Unit, Unit> Click_AttachFile { get; set; }
         public ReactiveCommand<Unit, Unit> Click_SendMessage { get; set; }
         private CacheService _cache;
         private const int KeepLastMessages = 50;
@@ -39,11 +39,13 @@ namespace Minimum.ViewModels
             Users.AddRange(chat.Users);
             Id = chat.Id;
             Name = chat.Name;
+            Users.AddRange(chat.Users);
+            Messages.AddRange(chat.Messages);
             Assigned_ChatHeaderViewModel = new ChatHeaderViewModel();
             Assigned_ChatHeaderViewModel.SetPictureDelegateHolder = SetBackgroundPicture;
-            Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFile);
+            // Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFile);
             Click_SendMessage = ReactiveCommand.CreateFromTask(SendMessage);
-            _cache = new CacheService();
+            _cache = App.ServiceProvider.GetRequiredService<CacheService>();
 
             ChatHeaderView chatHeader = new ChatHeaderView();
             ChatHeaderViewModel chatHeaderModel = new ChatHeaderViewModel();
@@ -66,9 +68,9 @@ namespace Minimum.ViewModels
                     Text = Input_Message,
                     Time = DateTime.Now
                 };
-                SaveMessagesToCacheAsync(ChatData.Id);
                 App.ServiceProvider.GetRequiredService<ServerConnectionManager>().SendMessage(Input_Message, ChatData.Id);
                 Messages.Add(message);
+                SaveMessagesToCacheAsync(ChatData.Id);
             }
         }
 
@@ -140,36 +142,12 @@ namespace Minimum.ViewModels
         {
         };
 
-        public ChatViewModel(Chat chat, CacheService cacheService)
-        {
-            Messages.AddRange(chat.Messages);
-            Users.AddRange(chat.Users);
-            Id = chat.Id;
-            Name = chat.Name;
-            _cache = cacheService;
-
-            LoadCachedMessagesAsync(chat.Id);
-        }
-
-
-        
-
         public void AddMessage(Message msg) => Messages.Add(msg);
-        public void AddMessage(Message msg) => Messages.Add(msg);
-
-
-        
-
-        public void AddMessage(Message msg) => Messages.Add(msg);
-
-
-
 
         public async Task LoadCachedMessagesAsync(int chatId)
         {
             var msgs = await _cache.LoadMessagesAsync(chatId);
             var last = msgs.OrderBy(m => m.Time).TakeLast(KeepLastMessages).ToList();
-            Messages.Clear();
             foreach (var m in last)
             {
                 Messages.Add(m);

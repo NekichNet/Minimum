@@ -12,16 +12,10 @@ public partial class ChatView : UserControl
 {
     public Chat Chat { get; set; }
 
-    private readonly CacheService _cache = new CacheService();
-    private readonly ServerConnectionManager _scm;
-
     public ChatView(Chat chat)
     {
-        _scm = new ServerConnectionManager(_cache);
-        var chatVm = new ChatViewModel(chat, _cache);
-
-        Chat = chat;
         InitializeComponent();
-        DataContext = chatVm;
+        Chat = chat;
+        DataContext = new ChatViewModel(chat, this);
     }
 }

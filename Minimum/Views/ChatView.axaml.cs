@@ -32,6 +32,6 @@ public partial class ChatView : UserControl
 
     private async Task InitConnection(ChatViewModel chatVm)
     {
-        _scm.StartListening(chatVm);
+        await _scm.StartListening(chatVm);
     }
 }

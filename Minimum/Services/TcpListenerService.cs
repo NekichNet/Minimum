@@ -25,7 +25,7 @@ namespace Minimum.Services
 
         public TcpListenerService() {
             _client = App.ServiceProvider.GetRequiredService<TcpClientService>().Client;
-            _ = ListeningAsync();
+            Task.Run(() => ListeningAsync());
         }
 
         private async Task ListeningAsync()

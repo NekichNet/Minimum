@@ -370,7 +370,7 @@ namespace Minimum.Services
 
 
 
-        public void StartListening(ChatViewModel chatVm)
+        public async Task StartListening(ChatViewModel chatVm)
         {
             var listener = App.ServiceProvider.GetRequiredService<TcpListenerService>();
 
@@ -390,8 +390,9 @@ namespace Minimum.Services
                         IsUploaded = dto.isUploaded,
                         Author = new Minimum.Models.User { Name = dto.author }
                     };
-
-                    await chatVm.AppendMessageAndCacheAsync(chatVm.Id, msg);
+                    await Avalonia.Threading.Dispatcher.UIThread.InvokeAsync(
+                        async () => await chatVm.AppendMessageAndCacheAsync(chatVm.Id, msg)
+                    );
                 }
             };
         }

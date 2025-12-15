@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static Minimum.Services.TcpListenerService;
 
 namespace Minimum.Services
 {
@@ -54,6 +55,23 @@ namespace Minimum.Services
             {
                 return new Response { Success = false, Message = $"Ошибка отправки: {ex.Message}" };
             }
+
+
+            var tcs = new TaskCompletionSource<Response>();
+
+            var listener = App.ServiceProvider.GetRequiredService<TcpListenerService>();
+
+            ResponseHandler handler = null!;
+            handler = (resp) =>
+            {
+                tcs.TrySetResult(resp);
+                listener.responseHandler -= handler;
+            };
+
+            listener.responseHandler += handler;
+
+            return await tcs.Task;
+
             /*
              * Вместо этого теперь цепляемся c помощью += за делегат TcpListenerService.ResponseHandler, который в аргументы пихает Response
              * 
@@ -348,6 +366,34 @@ namespace Minimum.Services
             {
                 Token = cachedToken;
             }
+        }
+
+
+
+        public void StartListening(ChatViewModel chatVm)
+        {
+            var listener = App.ServiceProvider.GetRequiredService<TcpListenerService>();
+
+            // подписываемся на делегат
+            listener.messageHandler += async (BroadcastMessage dto) =>
+            {
+                if (dto != null && dto.type == "message_broadcast")
+                {
+                    var msg = new Minimum.Models.Message
+                    {
+                        Id = dto.id,
+                        Text = dto.text,
+                        Time = dto.time,
+                        IsFile = dto.isFile,
+                        FileName = dto.fileName,
+                        FileId = dto.fileId,
+                        IsUploaded = dto.isUploaded,
+                        Author = new Minimum.Models.User { Name = dto.author }
+                    };
+
+                    await chatVm.AppendMessageAndCacheAsync(chatVm.Id, msg);
+                }
+            };
         }
 
 

@@ -10,12 +10,25 @@ namespace Minimum.Views;
 
 public partial class ChatView : UserControl
 {
+    private readonly CacheService _cache = new CacheService();
+    private readonly ServerConnectionManager _scm;
+
     public Chat Chat { get; set; }
 
     public ChatView(Chat chat)
     {
+        _scm = new ServerConnectionManager(_cache);
+        var chatVm = new ChatViewModel(chat, _cache, this);
+
         InitializeComponent();
         Chat = chat;
         DataContext = new ChatViewModel(chat, this);
+
+        _ = InitConnection(chatVm);
+    }
+
+    private async Task InitConnection(ChatViewModel chatVm)
+    {
+        _scm.StartListening(chatVm);
     }
 }

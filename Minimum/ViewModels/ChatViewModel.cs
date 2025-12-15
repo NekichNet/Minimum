@@ -34,6 +34,8 @@ namespace Minimum.ViewModels
         public ReactiveCommand<string, Unit> DownloadFileCommand { get; }
         private CacheService _cache;
         private Message msg;
+        private Chat chat;
+        private ChatView chatView;
         private const int KeepLastMessages = 50;
         private readonly ServerConnectionManager _scm;
 
@@ -71,7 +73,12 @@ namespace Minimum.ViewModels
             (parent as ChatView).ChatHeaderContainer.Child = chatHeader;
             LoadCachedMessagesAsync(chat.Id);
         }
-        
+
+        public ChatViewModel(Chat chat, ChatView chatView)
+        {
+            this.chat = chat;
+            this.chatView = chatView;
+        }
 
         public async Task SendMessage()
         {

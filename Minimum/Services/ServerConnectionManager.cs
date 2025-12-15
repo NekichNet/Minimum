@@ -1,4 +1,5 @@
 ﻿using Avalonia.Media.Imaging;
+using Microsoft.Extensions.DependencyInjection;
 using Minimum.Models;
 using Minimum.ViewModels;
 using System;
@@ -16,33 +17,15 @@ namespace Minimum.Services
     public class ServerConnectionManager
     {
         private TcpClient client;
-        public IPEndPoint ServerEndPoint { get; set; }
-
         private readonly CacheService _cacheService;
-
         public string? Token { get; private set; }
 
 
         public ServerConnectionManager(CacheService cacheService)
         {
-            client = new TcpClient();
-            ServerEndPoint = new IPEndPoint(IPAddress.Any, 31584);
-
+            client = App.ServiceProvider.GetRequiredService<TcpClientService>().Client;
             _cacheService = cacheService;
-            _ = StartConnection();
-        }
-
-        public async Task StartConnection()
-        {
-            if (!client.Connected)
-            {
-                await client.ConnectAsync("127.0.0.1", 31584);
-                await RestoreTokenAsync();
-            }
-            else
-            {
-                throw new Exception("TcpClient уже подключен");
-            }
+            _ = RestoreTokenAsync();
         }
 
 
@@ -71,7 +54,9 @@ namespace Minimum.Services
             {
                 return new Response { Success = false, Message = $"Ошибка отправки: {ex.Message}" };
             }
-
+            /*
+             * Вместо этого теперь цепляемся c помощью += за делегат TcpListenerService.ResponseHandler, который в аргументы пихает Response
+             * 
             var buffer = new byte[4096];
             int bytesRead;
             try
@@ -98,6 +83,7 @@ namespace Minimum.Services
             {
                 return new Response { Success = false, Message = $"Не JSON: {ex.Message}" };
             }
+            */
         }
 
 
@@ -182,9 +168,7 @@ namespace Minimum.Services
                 Type = "create_chat",
                 ChatName = chatName
             };
-            var resp = await SendRequest(req);
-
-            await CacheChatIfNeeded(resp);
+            Response resp = await SendRequest(req);
 
             return resp;
         }
@@ -341,7 +325,9 @@ namespace Minimum.Services
                 ChatId = chatId,
                 Token = Token
             };
-            return await SendRequest(req);
+            Response resp = await SendRequest(req);
+
+            return resp;
         }
 
         public async Task<Response> CheckToken(string token)
@@ -355,14 +341,6 @@ namespace Minimum.Services
             return await SendRequest(req);
         }
 
-        private async Task CacheChatIfNeeded(Response resp)
-        {
-            if (resp.Success && resp.Chat != null)
-            {
-                await _cacheService.SaveChatsAsync(new[] { resp.Chat });
-            }
-        }
-
         public async Task RestoreTokenAsync()
         {
             var cachedToken = await _cacheService.LoadTokenAsync();
@@ -373,7 +351,9 @@ namespace Minimum.Services
         }
 
 
-
+        /*
+         * Вместо этого теперь цепляемся c помощью += за делегат TcpListenerService.MessageHandler, который в аргументы пихает BroadcastMessage
+         * 
         public async Task StartListeningAsync(ChatViewModel chatVm)
         {
             var stream = client.GetStream();
@@ -432,5 +412,6 @@ namespace Minimum.Services
                 }
             }
         }
+        */
     }
 }

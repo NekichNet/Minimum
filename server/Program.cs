@@ -32,13 +32,15 @@ internal class Program
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IChatRepository, ChatRepository>();
             services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddSingleton<ChatConnectionService>();
 
             services.AddSingleton<TcpChatService>(provider =>
             {
                 var userRepository = provider.GetRequiredService<IUserRepository>();
                 var chatRepository = provider.GetRequiredService<IChatRepository>();
                 var messageRepository = provider.GetRequiredService<IMessageRepository>();
-                return new TcpChatService(_port, userRepository, chatRepository, messageRepository);
+                var chatConnectionService = provider.GetRequiredService<ChatConnectionService>();
+                return new TcpChatService(_port, userRepository, chatRepository, messageRepository, chatConnectionService);
             });
         });
 

@@ -29,7 +29,7 @@ namespace Minimum.ViewModels
         public string Input_Message { get; set; }
         public Chat ChatData { get; set; }
 
-        public ReactiveCommand<Unit, Unit> Click_AttachFile { get; set; }
+        // public ReactiveCommand<Unit, Unit> Click_AttachFile { get; set; }
         public ReactiveCommand<Unit, Unit> Click_SendMessage { get; set; }
         public ReactiveCommand<string, Unit> DownloadFileCommand { get; }
         private CacheService _cache;
@@ -44,11 +44,13 @@ namespace Minimum.ViewModels
             Users.AddRange(chat.Users);
             Id = chat.Id;
             Name = chat.Name;
+            Users.AddRange(chat.Users);
+            Messages.AddRange(chat.Messages);
             Assigned_ChatHeaderViewModel = new ChatHeaderViewModel();
             Assigned_ChatHeaderViewModel.SetPictureDelegateHolder = SetBackgroundPicture;
-            Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFile);
+            // Click_AttachFile = ReactiveCommand.CreateFromTask(AttachFile);
             Click_SendMessage = ReactiveCommand.CreateFromTask(SendMessage);
-            _cache = new CacheService();
+            _cache = App.ServiceProvider.GetRequiredService<CacheService>();
 
             ChatHeaderView chatHeader = new ChatHeaderView();
             ChatHeaderViewModel chatHeaderModel = new ChatHeaderViewModel();
@@ -57,6 +59,7 @@ namespace Minimum.ViewModels
 
 
             (parent as ChatView).ChatHeaderContainer.Child = chatHeader;
+            LoadCachedMessagesAsync(chat.Id);
         }
 
 
@@ -64,15 +67,16 @@ namespace Minimum.ViewModels
         {
             if (!string.IsNullOrEmpty(Input_Message.Trim()))
             {
-
-                App.ServiceProvider.GetRequiredService<ServerConnectionManager>().SendMessage(Input_Message, ChatData.Id);
-                Messages.Add(new Message() { 
+                Message message = new Message()
+                {
                     Author = App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser,
                     AuthorId = App.ServiceProvider.GetRequiredService<UserProviderService>().CurrentUser.Id,
                     Text = Input_Message,
                     Time = DateTime.Now
-                });
-                await SaveMessagesToCacheAsync(ChatData.Id);
+                };
+                App.ServiceProvider.GetRequiredService<ServerConnectionManager>().SendMessage(Input_Message, ChatData.Id);
+                Messages.Add(message);
+                SaveMessagesToCacheAsync(ChatData.Id);
             }
         }
 
@@ -142,55 +146,16 @@ namespace Minimum.ViewModels
         public int Id { get; set; }
         public string Name { get; set; }
         public ObservableCollection<User> Users { get; set; } = new ObservableCollection<User>();
-        public ObservableCollection<Chat> Chats { get; } = new ObservableCollection<Chat>();
-        public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>() { };
-
-        public ChatViewModel(Chat chat, CacheService cacheService)
+        public ObservableCollection<Message> Messages { get; set; } = new ObservableCollection<Message>()
         {
-            Messages.AddRange(chat.Messages);
-            Users.AddRange(chat.Users);
-            Id = chat.Id;
-            Name = chat.Name;
-            _cache = cacheService;
+        };
 
-            _ = LoadCachedMessagesAsync(chat.Id);
-        }
-
-
-
-        public void AddMessage(Message msg)
-        {
-            Messages.Add(msg);
-            _ = SaveMessagesToCacheAsync(Id);
-        }
-
-
-
-        public async Task LoadCachedChatsAsync()
-        {
-            var chats = await _cache.LoadChatsAsync();
-            Chats.Clear();
-            await SaveChatsToCacheAsync();
-            foreach (var c in chats.OrderByDescending(ch => ch.Id))
-            {
-                Chats.Add(c);
-                await SaveChatsToCacheAsync();
-            }
-        }
-
-
-        public async Task SaveChatsToCacheAsync()
-        {
-            await _cache.SaveChatsAsync(Chats.ToList());
-        }
-
-
+        public void AddMessage(Message msg) => Messages.Add(msg);
 
         public async Task LoadCachedMessagesAsync(int chatId)
         {
             var msgs = await _cache.LoadMessagesAsync(chatId);
             var last = msgs.OrderBy(m => m.Time).TakeLast(KeepLastMessages).ToList();
-            Messages.Clear();
             foreach (var m in last)
             {
                 Messages.Add(m);
@@ -207,8 +172,6 @@ namespace Minimum.ViewModels
 
         public async Task AppendMessageAndCacheAsync(int chatId, Message msg)
         {
-            Messages.Add(msg);
-
             var cached = await _cache.LoadMessagesAsync(chatId);
             cached.Add(msg);
             var trimmed = cached.OrderBy(m => m.Time).TakeLast(KeepLastMessages).ToList();

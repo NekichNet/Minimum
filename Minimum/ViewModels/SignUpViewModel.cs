@@ -1,4 +1,5 @@
-﻿using Minimum.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Minimum.Services;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -14,6 +15,8 @@ namespace Minimum.ViewModels
     {
         private readonly SignInUpView _signInUpView;
         public event Action<string>? Authenticated;
+
+        private readonly ServerConnectionManager _scm;
 
         public string Input_Login { get; set; } = string.Empty;
         public string Text_LoginWatermark { get; set; } = "Введите логин";
@@ -36,6 +39,8 @@ namespace Minimum.ViewModels
         {
             _signInUpView = signInUpView;
 
+            _scm = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
+
             Click_SignUp = ReactiveCommand.CreateFromTask(TrySignUp);
             Click_GoToSignIn = ReactiveCommand.CreateFromTask(GoToSignIn);
         }
@@ -44,14 +49,16 @@ namespace Minimum.ViewModels
 
         private async Task TrySignUp()
         {
-            var cacheService = new CacheService();
-            var req = new ServerConnectionManager(cacheService);
-            //await req.StartConnection();
-            var resp = await req.SignUp(Input_Login, Input_Password);
+            //var cacheService = new CacheService();
+            //var req = new ServerConnectionManager(cacheService);
+            ////await req.StartConnection();
+            //var resp = await req.SignUp(Input_Login, Input_Password);
+
+            var resp = await _scm.SignUp(Input_Login, Input_Password);
 
             if (resp != null && resp.Success)
             {
-                if (!string.IsNullOrWhiteSpace(resp.Token))
+                if (!string.IsNullOrWhiteSpace(resp.Token) && !string.IsNullOrWhiteSpace(resp.Token))
                 {
                     Authenticated?.Invoke(resp.Token);
                 }

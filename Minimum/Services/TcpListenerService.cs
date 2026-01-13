@@ -33,18 +33,37 @@ namespace Minimum.Services
             var stream = _client.GetStream();
             var buffer = new byte[4096];
             var sb = new StringBuilder();
+
             while (_client.Connected)
             {
-                sb.Clear();
                 int bytesRead;
 
-                do
+                try
                 {
-                    bytesRead = await stream.ReadAsync(buffer);
-                    sb.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
-                } while (bytesRead > 0);
+                    bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Ошибка чтения из сокета: " + ex.Message);
+                    break;
+                }
+
+                if (bytesRead <= 0)
+                {
+                    // соединение закрыто
+                    break;
+                }
+
+                sb.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+
+                //do
+                //{
+                //    bytesRead = await stream.ReadAsync(buffer);
+                //    sb.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
+                //} while (bytesRead > 0);
 
                 string jsonString = sb.ToString();
+                sb.Clear();
 
                 if (!string.IsNullOrWhiteSpace(jsonString))
                 {
@@ -54,13 +73,19 @@ namespace Minimum.Services
 
                         if (dto != null && dto.ContainsKey("type"))
                         {
-                            BroadcastMessage? message = dto.Deserialize<BroadcastMessage>();
-                            if (message != null) messageHandler(message);
+                            var message = dto.Deserialize<BroadcastMessage>();
+                            if (message != null)
+                            {
+                                messageHandler?.Invoke(message);
+                            }
                         }
                         else if (dto != null && dto.ContainsKey("Data"))
                         {
-                            Response? response = dto.Deserialize<Response>();
-                            if (response != null) responseHandler(response);
+                            var response = dto.Deserialize<Response>();
+                            if (response != null)
+                            {
+                                responseHandler?.Invoke(response);
+                            }
                         }
 
                     }

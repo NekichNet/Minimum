@@ -24,7 +24,20 @@ public class RegisterHandler : CommandHandler
 
             var newUser = new User { Name = request.Username, Password = request.Password };
             await UserRepository.AddUserAsync(newUser);
-            return new Response { Success = true, Message = "Регистрация успешна." };
+
+            string token = Guid.NewGuid().ToString();
+
+            var authToken = new AuthToken
+            {
+                Token = token,
+                UserId = newUser.Id,
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
+            };
+
+            await UserRepository.AddTokenAsync(authToken);
+
+            return new Response { Success = true, Message = "Регистрация успешна.", Token = token };
         }
         catch (Exception ex)
         {

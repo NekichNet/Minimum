@@ -50,7 +50,6 @@ namespace Minimum.Services
 
                 if (bytesRead <= 0)
                 {
-                    // соединение закрыто
                     break;
                 }
 
@@ -79,7 +78,7 @@ namespace Minimum.Services
                                 messageHandler?.Invoke(message);
                             }
                         }
-                        else if (dto != null && dto.ContainsKey("Data"))
+                        else //if (dto != null && dto.ContainsKey("Data"))
                         {
                             var response = dto.Deserialize<Response>();
                             if (response != null)

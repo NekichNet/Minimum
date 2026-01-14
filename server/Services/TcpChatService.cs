@@ -123,5 +123,6 @@ public class TcpChatService
         string jsonResponse = JsonConvert.SerializeObject(response) + "\n";
         byte[] bytes = Encoding.UTF8.GetBytes(jsonResponse);
         await stream.WriteAsync(bytes, 0, bytes.Length);
+        Console.WriteLine("SERVER SENDS: " + jsonResponse);
     }
 }

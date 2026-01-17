@@ -32,7 +32,7 @@ namespace Minimum.ViewModels
 
         public SignInViewModel(SignInUpView signInUpView)
         {
-            CheckToken();
+            _ = CheckToken();
             _signInUpView = signInUpView;
             Bool_RevealPassword = false;
             Text_PasswordChar = '•';

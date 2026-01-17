@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Minimum.Services;
+using Minimum.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
@@ -61,6 +62,8 @@ namespace Minimum.ViewModels
                 if (!string.IsNullOrWhiteSpace(resp.Token) && !string.IsNullOrWhiteSpace(resp.Token))
                 {
                     Authenticated?.Invoke(resp.Token);
+
+                    
                 }
             }
             else
@@ -76,6 +79,15 @@ namespace Minimum.ViewModels
             _signInUpView.ShowSignInView();
             //nav.NavigateTo<SignInView>();
             await Task.CompletedTask;
+        }
+
+
+        private async Task AutoRegister()
+        {
+            var win = new MainWindow();
+            win.Show();
+
+            _signInUpView.Close();
         }
     }
 }

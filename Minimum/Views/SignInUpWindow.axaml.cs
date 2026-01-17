@@ -33,6 +33,7 @@ public partial class SignInUpView : Window
     {
         var view = new SignInView(this);
         GetContentHost().Content = view;
+        SubscribeAuth(view);
     }
 
     // Показать экран регистрации
@@ -40,6 +41,7 @@ public partial class SignInUpView : Window
     {
         var view = new SignUpView(this);
         GetContentHost().Content = view;
+        SubscribeAuth(view);
     }
 
     public async Task LoadInitialViewAsync(Func<Task<bool>> needSignUpProvider)
@@ -71,7 +73,10 @@ public partial class SignInUpView : Window
 
     private void OnAuthenticated(string token)
     {
-        // Здесь можно сохранить token
+        if (string.IsNullOrEmpty(token))
+        {
+            _ = _cacheService.SaveTokenAsync(token);
+        }
 
         Dispatcher.UIThread.Post(async () =>
         {

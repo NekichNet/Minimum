@@ -8,6 +8,12 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = new MainViewModel(this);
+
+        var chatListVm = new ChatListViewModel(); 
+        ChatList.DataContext = chatListVm; 
+
+        DataContext = new MainViewModel(this, chatListVm);
+
+        _ = chatListVm.LoadCachedChatsAsync();
     }
 }

@@ -17,6 +17,9 @@ namespace Minimum.ViewModels
 {
     public class ChatListViewModel : ViewModelBase
     {
+        private readonly ServerConnectionManager _scm;
+        private readonly CacheService _cacheService;
+
         /// <summary>
         /// Делегат, который вызывается при измении выбранного индекса ListBox
         /// </summary>
@@ -50,31 +53,57 @@ namespace Minimum.ViewModels
 
         public ChatListViewModel(ObservableCollection<ChatChooserOption> chats)
         {
+            _scm = App.ServiceProvider.GetRequiredService<ServerConnectionManager>(); 
+            _cacheService = App.ServiceProvider.GetRequiredService<CacheService>();
+
             Chats = chats;
-            LoadCachedChatsAsync();
+            _ = LoadCachedChatsAsync();
             CurrentIndex = Chats.Count > 1? 1 : 0;
         }
+
+
         public ChatListViewModel()
         {
+            _scm = App.ServiceProvider.GetRequiredService<ServerConnectionManager>(); 
+            _cacheService = App.ServiceProvider.GetRequiredService<CacheService>();
+
             Chats = new ObservableCollection<ChatChooserOption>();
-            LoadCachedChatsAsync();
+            _ = LoadCachedChatsAsync();
             CurrentIndex = 0;
         }
+
 
         public async Task LoadCachedChatsAsync()
         {
             CacheService _cache = App.ServiceProvider.GetRequiredService<CacheService>();
             var chats = await _cache.LoadChatsAsync();
+
+            if (Chats.Count > 2) 
+            {
+                while (Chats.Count > 2)
+                {
+                    Chats.RemoveAt(2);
+                }
+            }
+
             foreach (Chat c in chats.OrderByDescending(ch => ch.Id))
             {
+                var chatView = new ChatView(c); 
+                var chatOption = new ChatChooserOption(chatView);
+
                 Chats.Add(new ChatChooserOption(new ChatView(c)));
             }
         }
 
         public async Task SaveChatsToCacheAsync()
         {
-            CacheService _cache = App.ServiceProvider.GetRequiredService<CacheService>();
-            await _cache.SaveChatsAsync(Chats.TakeLast(Chats.Count - 2).Select(chat => (chat.AssignedUserControl as ChatView).Chat));
+            //CacheService _cache = App.ServiceProvider.GetRequiredService<CacheService>();
+            //await _cache.SaveChatsAsync(Chats.TakeLast(Chats.Count - 2).Select(chat => (chat.AssignedUserControl as ChatView).Chat));
+
+            var realChats = Chats.Skip(2).
+                Select(opt => (opt.AssignedUserControl as ChatView)?.Chat).
+                Where(c => c != null).ToList(); 
+            await _cacheService.SaveChatsAsync(realChats);
         }
     }
 }

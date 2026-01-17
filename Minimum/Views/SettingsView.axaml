@@ -19,7 +19,7 @@
                 <Button Content="{Binding LoadAvatarTag}" Command="{Binding Click_UploadPFP}" Width="150" HorizontalAlignment="Left"/>
                 <TextBlock Text="{Binding UsernameTag}"  HorizontalAlignment="Left"/>
                 <TextBox Text="{Binding Username}" Width="200" HorizontalAlignment="Left"/>
-                <Button Content="{Binding QuitTag}" Width="150" HorizontalAlignment="Left"></Button>
+                <Button Content="{Binding QuitTag}" Command="{Binding QuitCommand}" Width="150" HorizontalAlignment="Left"></Button>
                 <TextBlock Text="{Binding ThemeTag}" HorizontalAlignment="Left"></TextBlock>
                 <ComboBox SelectedItem="{Binding Theme}" ItemsSource="{Binding Themes}" Width="150" HorizontalAlignment="Left"></ComboBox>
                 <TextBlock Text="{Binding ColorTag}" HorizontalAlignment="Left"></TextBlock>

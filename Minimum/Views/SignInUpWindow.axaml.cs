@@ -75,10 +75,7 @@ public partial class SignInUpView : Window
 
         Dispatcher.UIThread.Post(async () =>
         {
-            var mainWindow = new MainWindow
-            {
-                DataContext = new MainViewModel(new MainWindow())
-            };
+            var mainWindow = new MainWindow();
 
             mainWindow.Show();
             await Task.Delay(1); 

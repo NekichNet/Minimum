@@ -27,7 +27,7 @@ public partial class App : Application
         services.AddSingleton<UserProviderService>();
         services.AddSingleton<TcpClientService>();
         services.AddSingleton<TcpListenerService>();
-        services.AddTransient<CacheService>();
+        services.AddSingleton<CacheService>();
 
         _serviceProvider = services.BuildServiceProvider();
         ServiceProvider = _serviceProvider;

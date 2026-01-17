@@ -72,9 +72,7 @@ namespace Minimum.ViewModels
         {
             try
             {
-                var cacheService = new CacheService();
-                var scm = new Services.ServerConnectionManager(cacheService);
-                //await scm.StartConnection();
+                var scm = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
                 var resp = await scm.SignIn(Input_Login, Input_Password);
 
                 if (resp != null && resp.Success)

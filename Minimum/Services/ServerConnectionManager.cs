@@ -123,7 +123,8 @@ namespace Minimum.Services
                 Type = "update_user",
                 Username = user.Name,
                 Password = user.Password,
-                AvatarData = bytes
+                AvatarData = bytes,
+                Token = Token
             };
             return await SendRequest(req);
         }
@@ -136,6 +137,7 @@ namespace Minimum.Services
                 Type = "register",
                 Username = login,
                 Password = password,
+                Token = Token  /////////////////////////////////////////////
             };
 
             var resp = await SendRequest(req);
@@ -156,7 +158,8 @@ namespace Minimum.Services
             {
                 Type = "login",
                 Username = login,
-                Password = password
+                Password = password,
+                Token = Token  /////////////////////////////////////////////
             };
 
             var resp = await SendRequest(req);

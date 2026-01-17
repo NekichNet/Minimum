@@ -42,16 +42,28 @@ namespace Minimum.ViewModels
 
         public async Task CreateChat()
         {
-            Response response = await App.ServiceProvider.GetRequiredService<ServerConnectionManager>().CreateChat(Input_CreateChatChatName);
+            //Response response = await App.ServiceProvider.GetRequiredService<ServerConnectionManager>().CreateChat(Input_CreateChatChatName);
+            var scm = App.ServiceProvider.GetRequiredService<ServerConnectionManager>(); 
+            var response = await scm.CreateChat(Input_CreateChatChatName);
+
             if (response.Success)
             {
-                Chat chat = new Chat() { Id = (int)response.ChatId, Name = Input_CreateChatChatName };
-                ChatView chatView = new ChatView(chat);
-                ChatChooserOption chatOption = new ChatChooserOption(chatView);
+                var chat = new Chat() { Id = (int)response.ChatId, Name = Input_CreateChatChatName };
+                var chatView = new ChatView(chat);
+                var chatOption = new ChatChooserOption(chatView);
+
+                if (ChatListViewModel == null)
+                {
+                    throw new InvalidOperationException("ChatListViewModel is not set in CreateChatViewModel.");
+                }
+
                 ChatListViewModel.Chats.Add(chatOption);
-                ChatListViewModel.SaveChatsToCacheAsync();
+                ChatListViewModel.CurrentIndex = ChatListViewModel.Chats.Count - 1;
+                await ChatListViewModel.SaveChatsToCacheAsync();
             }
         }
+
+
         public async Task EnterChat()
         {
             Response response = await App.ServiceProvider.GetRequiredService<ServerConnectionManager>().JoinChat(Convert.ToInt32(Input_JoinChatChatName));
@@ -61,7 +73,7 @@ namespace Minimum.ViewModels
                 ChatView chatView = new ChatView(chat);
                 ChatChooserOption chatOption = new ChatChooserOption(chatView);
                 ChatListViewModel.Chats.Add(chatOption);
-                ChatListViewModel.SaveChatsToCacheAsync();
+                await ChatListViewModel.SaveChatsToCacheAsync();
             }
         }
     }

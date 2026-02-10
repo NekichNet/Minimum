@@ -32,7 +32,7 @@ namespace Minimum.ViewModels
 
         public SignInViewModel(SignInUpView signInUpView)
         {
-            _ = CheckToken();
+            //_ = CheckToken();
             _signInUpView = signInUpView;
             Bool_RevealPassword = false;
             Text_PasswordChar = '•';
@@ -62,7 +62,7 @@ namespace Minimum.ViewModels
 
         private async Task GoToSignUp()
         {
-            var nav = new NavigationService();
+            //var nav = new NavigationService();
             _signInUpView.ShowSignUpView();
             await Task.CompletedTask;
         }
@@ -80,10 +80,8 @@ namespace Minimum.ViewModels
                     if (!string.IsNullOrWhiteSpace(resp.Token))
                     {
                         Authenticated?.Invoke(resp.Token);
-
-                        await AutoLogin();
                     }
-                }
+            }
                 else
                 {
                     // можно показать ошибку пользователю
@@ -95,28 +93,39 @@ namespace Minimum.ViewModels
             }
         }
 
-        private async Task CheckToken()
+        public async Task CheckToken()
         {
-            var token = await App.ServiceProvider.GetRequiredService<CacheService>().LoadTokenAsync();
-
-            if (!string.IsNullOrEmpty(token))
+            try
             {
-                var con = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
-                var res = await con.CheckToken(token);
+                var cache = App.ServiceProvider.GetRequiredService<CacheService>();
+                //var token = await App.ServiceProvider.GetRequiredService<CacheService>().LoadTokenAsync();
+                var token = await cache.LoadTokenAsync();
 
-                if (res.Success == true)
+                if (!string.IsNullOrEmpty(token))
                 {
-                    await AutoLogin();
+                    var con = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
+                    var res = await con.CheckToken(token);
+
+                    if (res.Success == true)
+                    {
+                        //await AutoLogin();
+                        Authenticated?.Invoke(token);
+                    }
                 }
             }
+            catch
+            {
+
+            }
+            
         }
 
-        private async Task AutoLogin()
-        {
-            var win = new MainWindow();
-            win.Show();
+        //private async Task AutoLogin()
+        //{
+        //    var win = new MainWindow();
+        //    win.Show();
 
-            _signInUpView.Close();
-        }
+        //    _signInUpView.Close();
+        //}
     }
 }

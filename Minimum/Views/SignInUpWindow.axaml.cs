@@ -18,10 +18,38 @@ public partial class SignInUpView : Window
 
     public SignInUpView()
     {
-        InitializeComponent();
-        ShowSignInView();
         _cacheService = App.ServiceProvider.GetRequiredService<CacheService>();
+        InitializeComponent();
+        this.Opened += OnOpened;
+        ShowSignInView();
     }
+
+    private async void OnOpened(object? sender, EventArgs e)
+    {
+        try
+        {
+            if (ContentHost.Content is not SignInView signIn)
+                return;
+
+            if (signIn.ViewModel is null)
+                return;
+
+            await signIn.ViewModel.CheckToken();
+
+            //Dispatcher.UIThread.Post(async () =>
+            //{
+            //    if (ContentHost.Content is SignInView signIn && signIn.ViewModel != null)
+            //    {
+            //        await signIn.ViewModel.CheckToken();
+            //    }
+            //});
+        }
+        catch 
+        {
+            
+        }
+    }
+
 
     private void InitializeComponent()
     {
@@ -46,9 +74,21 @@ public partial class SignInUpView : Window
 
     public async Task LoadInitialViewAsync(Func<Task<bool>> needSignUpProvider)
     {
-        if (needSignUpProvider == null) throw new ArgumentNullException(nameof(needSignUpProvider));
+        if (needSignUpProvider == null)
+        {
+            throw new ArgumentNullException(nameof(needSignUpProvider));
+        }
+
         bool needSignUp = await needSignUpProvider();
-        if (needSignUp) ShowSignUpView(); else ShowSignInView();
+
+        if (needSignUp)
+        {
+            ShowSignUpView();
+        }
+        else
+        {
+            ShowSignInView();
+        }
     }
 
     private ContentControl GetContentHost()
@@ -73,17 +113,16 @@ public partial class SignInUpView : Window
 
     private void OnAuthenticated(string token)
     {
-        if (string.IsNullOrEmpty(token))
-        {
-            _ = _cacheService.SaveTokenAsync(token);
-        }
-
         Dispatcher.UIThread.Post(async () =>
         {
-            var mainWindow = new MainWindow();
+            if (!string.IsNullOrEmpty(token))
+            {
+                _ = _cacheService.SaveTokenAsync(token);
+            }
 
+            var mainWindow = new MainWindow();
             mainWindow.Show();
-            await Task.Delay(1); 
+            await Task.Delay(1);
             this.Close();
         });
     }

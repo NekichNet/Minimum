@@ -32,7 +32,6 @@ namespace Minimum.ViewModels
 
         public SignInViewModel(SignInUpView signInUpView)
         {
-            //_ = CheckToken();
             _signInUpView = signInUpView;
             Bool_RevealPassword = false;
             Text_PasswordChar = '•';
@@ -62,7 +61,6 @@ namespace Minimum.ViewModels
 
         private async Task GoToSignUp()
         {
-            //var nav = new NavigationService();
             _signInUpView.ShowSignUpView();
             await Task.CompletedTask;
         }
@@ -106,9 +104,8 @@ namespace Minimum.ViewModels
                     var con = App.ServiceProvider.GetRequiredService<ServerConnectionManager>();
                     var res = await con.CheckToken(token);
 
-                    if (res.Success == true)
+                    if ( res != null && res.Success)
                     {
-                        //await AutoLogin();
                         Authenticated?.Invoke(token);
                     }
                 }
@@ -119,13 +116,5 @@ namespace Minimum.ViewModels
             }
             
         }
-
-        //private async Task AutoLogin()
-        //{
-        //    var win = new MainWindow();
-        //    win.Show();
-
-        //    _signInUpView.Close();
-        //}
     }
 }

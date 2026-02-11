@@ -116,8 +116,6 @@ namespace Minimum.Services
                 bytes =  ms.ToArray();
             }
 
-
-
             var req = new Request()
             {
                 Type = "update_user",

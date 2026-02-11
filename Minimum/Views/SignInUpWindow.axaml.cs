@@ -34,15 +34,15 @@ public partial class SignInUpView : Window
             if (signIn.ViewModel is null)
                 return;
 
-            await signIn.ViewModel.CheckToken();
+            //await signIn.ViewModel.CheckToken();
 
-            //Dispatcher.UIThread.Post(async () =>
-            //{
-            //    if (ContentHost.Content is SignInView signIn && signIn.ViewModel != null)
-            //    {
-            //        await signIn.ViewModel.CheckToken();
-            //    }
-            //});
+            Dispatcher.UIThread.Post(async () =>
+            {
+                if (ContentHost.Content is SignInView signIn && signIn.ViewModel is SignInViewModel vm)
+                {
+                    await vm.CheckToken();
+                }
+            });
         }
         catch 
         {
@@ -117,7 +117,7 @@ public partial class SignInUpView : Window
         {
             if (!string.IsNullOrEmpty(token))
             {
-                _ = _cacheService.SaveTokenAsync(token);
+                await _cacheService.SaveTokenAsync(token);
             }
 
             var mainWindow = new MainWindow();

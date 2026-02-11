@@ -10,15 +10,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Minimum.Models;
 using Minimum.Services;
 using Minimum.View;
-using Minimum.View;
 using Minimum.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -427,7 +424,6 @@ namespace Minimum.ViewModels
 
         private async void SaveSettings()
         {
-            // NEW: корректное сохранение аватара
             string avatarPath = _avatarPath;
 
             if (Avatar != null)

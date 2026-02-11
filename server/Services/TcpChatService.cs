@@ -70,54 +70,105 @@ public class TcpChatService
         }
     }
 
+    //private async Task HandleClient(TcpClient client)
+    //{
+    //    using var stream = client.GetStream();
+    //    var buffer = new byte[4096];
+    //    int bytesRead;
+
+    //    while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+    //    {
+    //        var data = Encoding.UTF8.GetString(buffer, 0, bytesRead).TrimEnd('\0', '\n', '\r');
+    //        Request request = null;
+
+    //        try
+    //        {
+    //            request = JsonConvert.DeserializeObject<Request>(data);
+    //            Console.WriteLine($"{request.Username}, {request.Password}");
+    //        }
+    //        catch (JsonException)
+    //        {
+    //            await SendJsonResponse(stream, new Response { Success = false, Message = "Неверный формат JSON." });
+    //            continue;
+    //        }
+    //        catch (Exception ex)
+    //        {
+    //            Console.WriteLine(ex.ToString());
+    //        }
+
+    //        if (request == null)
+    //        {
+    //            await SendJsonResponse(stream, new Response { Success = false, Message = "Запрос пуст." });
+    //            continue;
+    //        }
+
+    //        Response response;
+    //        if (_handlers.TryGetValue(request.Type, out var handler))
+    //        {
+    //            response = await handler(request, stream, client);
+    //        }
+    //        else
+    //        {
+    //            response = new Response { Success = false, Message = "Неизвестная команда." };
+    //        }
+
+    //        if (request.Type != "download_file")
+    //        {
+    //            await SendJsonResponse(stream, response);
+    //        }
+    //    }
+    //}
+
     private async Task HandleClient(TcpClient client)
     {
         using var stream = client.GetStream();
         var buffer = new byte[4096];
-        int bytesRead;
+        var sb = new StringBuilder();
 
-        while ((bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+        while (true)
         {
-            var data = Encoding.UTF8.GetString(buffer, 0, bytesRead).TrimEnd('\0', '\n', '\r');
-            Request request = null;
+            int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+            if (bytesRead <= 0)
+                break;
 
-            try
-            {
-                request = JsonConvert.DeserializeObject<Request>(data);
-                Console.WriteLine($"{request.Username}, {request.Password}");
-            }
-            catch (JsonException)
-            {
-                await SendJsonResponse(stream, new Response { Success = false, Message = "Неверный формат JSON." });
-                continue;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-            }
+            sb.Append(Encoding.UTF8.GetString(buffer, 0, bytesRead));
 
-            if (request == null)
+            while (true)
             {
-                await SendJsonResponse(stream, new Response { Success = false, Message = "Запрос пуст." });
-                continue;
-            }
+                var full = sb.ToString();
+                var idx = full.IndexOf('\n');
+                if (idx == -1)
+                    break;
 
-            Response response;
-            if (_handlers.TryGetValue(request.Type, out var handler))
-            {
-                response = await handler(request, stream, client);
-            }
-            else
-            {
-                response = new Response { Success = false, Message = "Неизвестная команда." };
-            }
+                var jsonLine = full[..idx].Trim();
+                sb.Remove(0, idx + 1);
 
-            if (request.Type != "download_file")
-            {
-                await SendJsonResponse(stream, response);
+                if (string.IsNullOrWhiteSpace(jsonLine))
+                    continue;
+
+                Request request;
+                try
+                {
+                    request = JsonConvert.DeserializeObject<Request>(jsonLine);
+                }
+                catch
+                {
+                    await SendJsonResponse(stream, new Response { Success = false, Message = "Неверный формат JSON." });
+                    continue;
+                }
+
+                Response response;
+                if (_handlers.TryGetValue(request.Type, out var handler))
+                    response = await handler(request, stream, client);
+                else
+                    response = new Response { Success = false, Message = "Неизвестная команда." };
+
+                if (request.Type != "download_file")
+                    await SendJsonResponse(stream, response);
             }
         }
     }
+
 
     private async Task SendJsonResponse(NetworkStream stream, Response response)
     {

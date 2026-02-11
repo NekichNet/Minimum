@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -16,7 +17,14 @@ namespace Minimum.Models
         public string Name { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public string AvatarPath { get; set; } = string.Empty;
-        public Bitmap? Avatar { get; set; } 
+        [NotMapped]
+        public Bitmap? Avatar { get; set; }
+
+        public string Theme { get; set; }
+        public string Accent1 { get; set; }
+        public string Accent2 { get; set; }
+        public string AccentForeground { get; set; }
+
 
         [JsonIgnore]
         public List<Message> Messages { get; set; } = new List<Message>();

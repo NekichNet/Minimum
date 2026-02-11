@@ -54,6 +54,21 @@ public class UpdateUserProfileHandler : CommandHandler
             }
         }
 
+        if (!string.IsNullOrEmpty(request.Theme))
+        { 
+            user.Theme = request.Theme;
+            updated = true;
+        }
+
+        if (!string.IsNullOrEmpty(request.Accent1))
+        {
+            user.Accent1 = request.Accent1;
+            user.Accent2 = request.Accent2;
+            user.AccentForeground = request.AccentForeground;
+            updated = true;
+        }
+
+
         if (updated)
         {
             await UserRepository.UpdateUserAsync(user);

@@ -26,5 +26,11 @@ namespace Minimum.Models
         public long FileSize { get; set; }
         public byte[] FileData { get; set; } = Array.Empty<byte>();
         public bool IsUploadComplete { get; set; }
+
+        public string Theme { get; set; }
+        public string Accent1 { get; set; }
+        public string Accent2 { get; set; }
+        public string AccentForeground { get; set; }
+
     }
 }
